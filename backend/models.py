@@ -1,7 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
-database_name = "proyectodb"
+database_name = "proyecto"
 username = 'postgres'
 password = 'gabrieleeh32159'
 database_path = f"postgresql://{username}:{password}@{'localhost:5432'}/{database_name}"
@@ -41,6 +41,28 @@ class User(db.Model):
             return None
         return User.query.get(user_id)
     '''
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+
+    def format(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+            'description': self.description,
+            'email': self.email,
+            'image_file': self.image_file,
+            'password':self.password,
+            'posts':[post.format() for post in self.posts]
+        }
 
 # __ex__ <- are called dunder methods (shows how the object is printed )
     def __repr__(self):
@@ -57,6 +79,28 @@ class Post(db.Model):
     #El post puede debe haber sido publicado en algún grupo. Por defecto este será el grupo 1. General. 
     group_id = db.Column(db.Integer, db.ForeignKey('groups.id'), nullable=False, default=0) 
 
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+
+    def format(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'date_posted': self.date_posted,
+            'content': self.content,
+            'user_id': self.user_id,
+            'group_id': self.group_id
+        }
+    
     def __repr__(self):
         return f"Post('{self.title}', '{self.date_posted}')"
 
@@ -68,9 +112,25 @@ class Group(db.Model):
     members = db.relationship('User', secondary = 'group_user', lazy = True)
     posts = db.relationship('Post', backref = 'posts', lazy = True)
 
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
+
+    def format(self):
+        return {
+            'id': self.id,
+            'group_name': self.group_name
+        }
 
 class GroupUser(db.Model):
     __tablename__ = 'group_user'
     group_id = db.Column(db.Integer, db.ForeignKey('groups.id'), primary_key = True) 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key = True) 
-
