@@ -6,17 +6,24 @@ from flask import (
 )
 from flask_cors import CORS
 from models import setup_db, User, Post, GroupUser, Group
+import base64
 
 items_per_page = 5
 
-def pagination(request, selection):
-    page = request.args.get('page', 1, type=int)
-    start = (page - 1)*items_per_page
-    end = start + items_per_page
-    users = [user.format() for user in selection]
-    current_users = users[start:end]
-
-    return current_users
+def pagination(request, selection, decreasing = False):
+    page = request.args.get('page', 0, type=int)
+    if page == 0:
+        start = 0
+        end = len(selection)
+    elif decreasing:
+        start = len(selection) - items_per_page
+        end = len(selection)
+    else: 
+        start = (page - 1)*items_per_page
+        end = (start + items_per_page)
+    items = [item.format() for item in selection]
+    current = items[start:end]
+    return current
 
 def create_app(test_config=None):
     app = Flask(__name__)
@@ -40,7 +47,7 @@ def create_app(test_config=None):
         return jsonify({
             'success': True,
             'users': users,
-            'amount_users': len(users)
+            'amount_users': len(selection)
         })
 
     @app.route('/users', methods=['POST'])
@@ -50,12 +57,20 @@ def create_app(test_config=None):
         username = body.get('username', None)
         email = body.get('email',None)
         password = body.get('password',None)
+        image = body.get('image', base64.b64encode(open('server/imagenes/default.jpg', 'rb').read()).decode('utf-8'))
 
-        user = User(username=username, email=email, password=password)
+        if username is None or email is None or password is None:
+            abort(422)
+
+        user = User(username=username, email=email, password=base64.b64encode(password.encode('UTF-8')), image_file = image)
+
+        user.insert()
         new_user_id = user.id
+        group_user = GroupUser(group_id = 0, user_id = new_user_id)
+        group_user.insert()
 
         selection = User.query.order_by('id').all()
-        current_users = pagination(request, selection)
+        current_users = pagination(request, selection, True)
 
         return jsonify({
             'success':True,
