@@ -257,6 +257,10 @@ def create_app(test_config=None):
             else:
                 abort(500)
 
+    @app.route('/group/<group_id>/user/<user_id>', methods=['GET'])
+    def get_user_posts():
+        pass
+
     @app.errorhandler(404)
     def not_found(error):
         return jsonify({
