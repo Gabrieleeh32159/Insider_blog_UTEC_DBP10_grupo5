@@ -9,10 +9,15 @@ from models import setup_db, User, Post, GroupUser, Group
 import base64
 
 items_per_page = 5
+default_image = base64.b64encode(open('server/imagenes/default.jpg', 'rb').read()).decode('utf-8')
 
 def pagination(request, selection, decreasing = False):
-    page = request.args.get('page', 0, type=int)
-    if page == 0:
+    page = request.args.get('page', None, type=int)
+
+    if page is None:
+        start = 0
+        end = 5 
+    elif page == 0:
         start = 0
         end = len(selection)
     elif decreasing:
@@ -24,6 +29,10 @@ def pagination(request, selection, decreasing = False):
     items = [item.format() for item in selection]
     current = items[start:end]
     return current
+
+def encriptar(palabra):
+    return base64.b64encode(palabra.encode('UTF-8'))
+
 
 def create_app(test_config=None):
     app = Flask(__name__)
@@ -55,14 +64,15 @@ def create_app(test_config=None):
         body = request.get_json()
 
         username = body.get('username', None)
+        description = body.get('description', '')
         email = body.get('email',None)
         password = body.get('password',None)
-        image = body.get('image', base64.b64encode(open('server/imagenes/default.jpg', 'rb').read()).decode('utf-8'))
+        image = body.get('image', default_image)
 
         if username is None or email is None or password is None:
             abort(422)
 
-        user = User(username=username, email=email, password=base64.b64encode(password.encode('UTF-8')), image_file = image)
+        user = User(username=username, description = description, email=email, password=encriptar(password), image_file = image)
 
         user.insert()
         new_user_id = user.id
@@ -96,6 +106,10 @@ def create_app(test_config=None):
                 user.email = body.get('email')
             if 'password' in body:
                 user.password = body.get('password')
+            if 'description' in body:
+                user.description = body.get('description')
+            if 'image' in body:
+                user.image_file = body.get('image')
 
             user.update()
 
@@ -140,11 +154,35 @@ def create_app(test_config=None):
             else:
                 abort(500)
 
+    @app.route('/groups', methods=['POST'])
+    def create_group():
+        body = request.get_json()
+
+        groupname = body.get('groupname', None)
+
+        if groupname is None:
+            abort(422)
+
+        group = Group(group_name=groupname)
+
+        group.insert()
+        new_user_id = group.id
+
+        selection = Group.query.order_by('id').all()
+        current_groups = pagination(request, selection)
+
+        return jsonify({
+            'success':True,
+            'created':new_user_id,
+            'groups': current_groups,
+            'total_groups': len(selection)
+        })
+
     @app.route('/groups', methods=['GET'])
     def get_groups():
         error_404 = False
         try:
-            groups = {group.id: {'id': group.id, 'name': group.group_name} for group in Group.query.order_by("id").all()}
+            groups = [group.format() for group in Group.query.order_by("id").all()]
 
             if len(groups) == 0:
                 error_404 = True
@@ -152,14 +190,72 @@ def create_app(test_config=None):
 
             return jsonify({
                 'success': True,
-                'lists': groups,
-                'total_lists': len(groups)
+                'grupos': groups,
+                'total_groups': len(groups)
             })
 
         except Exception as e:
             print(e)
             if error_404:
                 abort(404)
+    
+    @app.route('/groups/<group_id>', methods=['DELETE'])
+    def delete_group(group_id):
+        error_404 = False
+        try:
+            group = Group.query.filter(Group.id == group_id).one_or_none()
+            
+            if group is None:
+                error_404 = True
+                abort(404)
+
+            group.delete()
+
+            selection = Group.query.order_by('id').all()
+            groups = pagination(request, selection)
+
+            return jsonify({
+                "success":True,
+                "deleted":group_id,
+                "groups":groups,
+                "total_groups":len(selection)
+            })
+
+        except Exception as e:
+            print(e)
+            if error_404:
+                abort(404)
+            else:
+                abort(500)
+
+    @app.route('/groups/<group_id>', methods=['PATCH'])
+    def update_group(group_id):
+        error_404 = False
+        try:
+            group = Group.query.filter(Group.id==group_id).one_or_none()
+
+            if group is None:
+                error_404 = True
+                abort(404)
+
+            body = request.get_json()
+
+            if 'groupname' in body:
+                group.group_name = body.get('groupname')
+
+            group.update()
+
+            return jsonify({
+                'success': True,
+                'id': group_id
+            })
+
+        except Exception as e:
+            print(e)
+            if error_404:
+                abort(404)
+            else:
+                abort(500)
 
     @app.errorhandler(404)
     def not_found(error):
