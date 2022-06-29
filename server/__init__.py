@@ -312,6 +312,52 @@ def create_app(test_config=None):
             'amount_posts': len(selection)
         })
 
+    @app.route('/posts/users/<user_id>/groups/<group_id>', methods=['GET'])
+    def get_posts_by_group_and_user(user_id, group_id):
+        error_404 = False
+        try:
+            user = User.query.filter(User.id==user_id).one_or_none()
+            group = Group.query.filter(Group.id==group_id).one_or_none()
+            
+            if user is None or group is None:
+                error_404 = True
+                abort(404)
+
+            print(group_id, user_id)
+
+            selection = Post.query.order_by('id').all()
+
+            #current_posts = pagination(request=request, selection=selection)
+
+            if len(selection) == 0:
+                error_404 = True
+                abort(404)
+
+            return jsonify({
+                'success': True,
+                'posts': [post for post in selection if (post["group_id"] == group_id and post["user_id"] == user_id)],
+                'total_posts': len(selection)
+            })
+
+        except Exception as e:
+            print(e)
+            if error_404:
+                abort(404)
+            else:
+                abort(500)
+
+    @app.route('/user/<user_id>/group/<group_id>', methods=['POST'])
+    def join_user_group():
+        error_404 = False
+        try:
+            pass
+        except Exception as e:
+            print(e)
+            if error_404:
+                abort(404)
+            else:
+                abort(500)
+
     @app.route('/group/<group_id>/user/<user_id>', methods=['GET'])
     def get_user_posts():
         pass
