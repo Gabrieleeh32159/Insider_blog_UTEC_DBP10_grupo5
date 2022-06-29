@@ -1,3 +1,4 @@
+from email.policy import default
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
@@ -25,7 +26,11 @@ class User(db.Model):
     email = db.Column(db.String(120), unique = True, nullable = False)
     image_file = db.Column(db.Text, nullable = False, default=base64.b64encode(open('server/imagenes/default.jpg', 'rb').read()).decode('utf-8'))
     password = db.Column(db.String, nullable=False)
+<<<<<<< HEAD
     posts = db.relationship('Post', backref='author', lazy=True, cascade="all, delete-orphan")
+=======
+    posts = db.relationship('Post', backref='author', lazy=True, cascade="all, delete-orphan")
+>>>>>>> b8d6c4dbda5ce5a262072c10c011e49b9c623e91
     groups = db.relationship('Group', secondary='group_user' , lazy = True)
 
     def insert(self):
