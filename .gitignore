@@ -1,4 +1,4 @@
 insider_blog_frontend/*
 venv/*
-__pycache__
-server/__pycache__
+__pycache__/*
+server/__pycache__/*
