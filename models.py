@@ -78,8 +78,6 @@ class Post(db.Model):
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     content = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False) 
-
-    #El post puede debe haber sido publicado en algún grupo. Por defecto este será el grupo 1. General. 
     group_id = db.Column(db.Integer, db.ForeignKey('groups.id'), nullable=False, default=0) 
 
     def insert(self):
@@ -116,6 +114,7 @@ class Post(db.Model):
         return{
             'id': self.id,
             'title': self.title,
+            'content': self.content,
             'user_id': self.user_id,
             'group_id':self.group_id
         }
