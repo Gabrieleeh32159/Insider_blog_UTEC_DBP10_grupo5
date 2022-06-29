@@ -1,10 +1,11 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
+import base64
 
 db_name = "proyecto"
 password = os.environ.get('pg_pass')
-port = 9173
+port = 5432
 db_path='postgresql://postgres:{}@localhost:{}/{}'.format(password,port,db_name)
 
 db = SQLAlchemy()
@@ -15,23 +16,23 @@ def setup_db(app, database_path=db_path):
     db.app=app
     db.init_app(app)
     db.create_all()
-    print('db setted up! :)')
 
 class User(db.Model):
     __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key = True)
-    username = db.Column(db.String(20), unique = True, nullable = False)
+    id = db.Column(db.Integer, primary_key = True, nullable= True)
+    username = db.Column(db.String(20), unique = True, autoincrement = True, nullable = False)
     description = db.Column(db.Text, default='')
     email = db.Column(db.String(120), unique = True, nullable = False)
-    image_file = db.Column(db.String(20), nullable = False, default='default.jpg')
-    password = db.Column(db.String(60), nullable=False)
-    posts = db.relationship('Post', backref='author', lazy=True)
-    groups = db.relationship('Group', secondary='group_user', lazy = True)
+    image_file = db.Column(db.Text, nullable = False, default=base64.b64encode(open('server/imagenes/default.jpg', 'rb').read()).decode('utf-8'))
+    password = db.Column(db.String, nullable=False)
+    posts = db.relationship('Post', backref='author', lazy=True, cascade="all, delete-orphan")
+    groups = db.relationship('Group', secondary='group_user' , lazy = True)
 
     def insert(self):
         try:
             db.session.add(self)
             db.session.commit()
+            return self.id
         except:
             db.session.rollback()
         finally:
@@ -61,7 +62,12 @@ class User(db.Model):
         return{
             'id': self.id,
             'username': self.username,
-            'email': self.email
+            'description': self.description,
+            'email': self.email,
+            'image_file': self.image_file,
+            'password': self.password,
+            'posts_ids': [post.id for post in self.posts],
+            'groups_ids': [group.id for group in self.groups]
         }
 
 class Post(db.Model):
@@ -71,14 +77,13 @@ class Post(db.Model):
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     content = db.Column(db.Text, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False) 
-
-    #El post puede debe haber sido publicado en algún grupo. Por defecto este será el grupo 1. General. 
     group_id = db.Column(db.Integer, db.ForeignKey('groups.id'), nullable=False, default=0) 
 
     def insert(self):
         try:
             db.session.add(self)
             db.session.commit()
+            return self.id
         except:
             db.session.rollback()
         finally:
@@ -108,6 +113,7 @@ class Post(db.Model):
         return{
             'id': self.id,
             'title': self.title,
+            'content': self.content,
             'user_id': self.user_id,
             'group_id':self.group_id
         }
@@ -118,12 +124,13 @@ class Group(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     group_name = db.Column(db.String(30), unique = True, nullable = False)
     members = db.relationship('User', secondary = 'group_user', lazy = True)
-    posts = db.relationship('Post', backref = 'posts', lazy = True)
+    posts = db.relationship('Post', backref = 'posts', lazy = True, cascade = "all, delete-orphan")
 
     def insert(self):
         try:
             db.session.add(self)
             db.session.commit()
+            return self.id
         except:
             db.session.rollback()
         finally:
@@ -161,3 +168,28 @@ class GroupUser(db.Model):
     group_id = db.Column(db.Integer, db.ForeignKey('groups.id'), primary_key = True) 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key = True) 
 
+    def insert(self):
+        try:
+            db.session.add(self)
+            db.session.commit()
+        except:
+            db.session.rollback()
+        finally:
+            db.session.close()
+    
+    def update(self):
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
+        finally:
+            db.session.close()
+
+    def delete(self):
+        try:
+            db.session.delete(self)
+            db.session.commit()
+        except:
+            db.session.rollback()
+        finally:
+            db.session.close()
