@@ -257,6 +257,61 @@ def create_app(test_config=None):
             else:
                 abort(500)
 
+    @app.route('/posts/users/<user_id>/groups/<group_id>', methods=['POST'])
+    def create_post(user_id, group_id):
+        error_404 = False
+        try:
+            user = User.query.filter(User.id == user_id).one_or_none()
+            group = Group.query.filter(Group.id == group_id).one_or_none()
+
+            if user is None or group is None:
+                error_404 = True
+                abort(404)
+
+            body = request.get_json()
+
+            title = body.get('title', None)
+            content = body.get('content', None)
+
+            if title is None or content is None:
+                error_404 = True
+                abort(404)
+
+            post = Post(title=title, content=content,
+                        user_id=user_id, group_id=group_id)
+
+            post_id = post.insert()
+
+            selection = [post for post in Post.query.order_by('id').all(
+            ) if post.group_id == group_id and post.user_id == user_id]
+            #current_posts = pagination(request=request, selection=selection)
+            return jsonify({
+                'success': True,
+                'id': post_id,
+                'posts': selection
+            })
+
+        except Exception as e:
+            print(e)
+            if error_404:
+                abort(404)
+            else:
+                abort(500)
+
+    @app.route('/posts', methods=['GET'])
+    def get_all_posts():
+        selection = Post.query.order_by('id').all()
+        posts = pagination(request, selection)
+
+        if len(posts) == 0:
+            abort(404)
+
+        return jsonify({
+            'success': True,
+            'posts': posts,
+            'amount_posts': len(selection)
+        })
+
     @app.route('/group/<group_id>/user/<user_id>', methods=['GET'])
     def get_user_posts():
         pass
