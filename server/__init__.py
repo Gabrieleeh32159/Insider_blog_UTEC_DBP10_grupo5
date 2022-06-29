@@ -8,23 +8,15 @@ from flask import (
 from flask_cors import CORS
 from models import setup_db, User, Post, GroupUser, Group
 import base64
-<<<<<<< HEAD
 
 default_image = base64.b64encode(open('server/imagenes/default.jpg', 'rb').read()).decode('utf-8')
-=======
->>>>>>> b8d6c4dbda5ce5a262072c10c011e49b9c623e91
 
 items_per_page = 5
-default_image = base64.b64encode(open('server/imagenes/default.jpg', 'rb').read()).decode('utf-8')
 
 def pagination(request, selection, decreasing = False):
     page = request.args.get('page', None, type=int)
 
-<<<<<<< HEAD
     if page is None and not decreasing:
-=======
-    if page is None:
->>>>>>> b8d6c4dbda5ce5a262072c10c011e49b9c623e91
         start = 0
         end = 5 
     elif page == 0:
@@ -39,16 +31,9 @@ def pagination(request, selection, decreasing = False):
     items = [item.format() for item in selection]
     current = items[start:end]
     return current
-<<<<<<< HEAD
 
 def encriptar(palabra):
     return base64.b64encode(palabra.encode('UTF-8'))
-=======
-
-def encriptar(palabra):
-    return base64.b64encode(palabra.encode('UTF-8'))
-
->>>>>>> b8d6c4dbda5ce5a262072c10c011e49b9c623e91
 
 def create_app(test_config=None):
     app = Flask(__name__)
@@ -86,21 +71,12 @@ def create_app(test_config=None):
         email = body.get('email',None)
         password = body.get('password',None)
         image = body.get('image', default_image)
-<<<<<<< HEAD
 
         if username is None or email is None or password is None:
             abort(422)
 
         user = User(username=username, description = description, email=email, password=encriptar(password), image_file = image)
 
-=======
-
-        if username is None or email is None or password is None:
-            abort(422)
-
-        user = User(username=username, description = description, email=email, password=encriptar(password), image_file = image)
-
->>>>>>> b8d6c4dbda5ce5a262072c10c011e49b9c623e91
         user.insert()
         new_user_id = user.id
         group_user = GroupUser(group_id = 0, user_id = new_user_id)
@@ -181,11 +157,8 @@ def create_app(test_config=None):
             else:
                 abort(500)
 
-<<<<<<< HEAD
     #* GROUPS
 
-=======
->>>>>>> b8d6c4dbda5ce5a262072c10c011e49b9c623e91
     @app.route('/groups', methods=['POST'])
     def create_group():
         body = request.get_json()
@@ -231,20 +204,12 @@ def create_app(test_config=None):
             if error_404:
                 abort(404)
     
-<<<<<<< HEAD
     @app.route('/groups/<int:group_id>', methods=['DELETE'])
-=======
-    @app.route('/groups/<group_id>', methods=['DELETE'])
->>>>>>> b8d6c4dbda5ce5a262072c10c011e49b9c623e91
     def delete_group(group_id):
         error_404 = False
         try:
             group = Group.query.filter(Group.id == group_id).one_or_none()
-<<<<<<< HEAD
             print(group.id)
-=======
-            
->>>>>>> b8d6c4dbda5ce5a262072c10c011e49b9c623e91
             if group is None:
                 error_404 = True
                 abort(404)
@@ -288,7 +253,6 @@ def create_app(test_config=None):
             return jsonify({
                 'success': True,
                 'id': group_id
-<<<<<<< HEAD
             })
 
         except Exception as e:
@@ -436,8 +400,6 @@ def create_app(test_config=None):
                 'id': post_id,
                 'posts': current_posts,
                 'amonunt_posts': len(selection)
-=======
->>>>>>> b8d6c4dbda5ce5a262072c10c011e49b9c623e91
             })
 
         except Exception as e:
@@ -446,17 +408,11 @@ def create_app(test_config=None):
                 abort(404)
             else:
                 abort(500)
-<<<<<<< HEAD
     
     #TODO
     #* UNIR USUARIOS A GRUPOS
     @app.route('/user/<int:user_id>/group/<int:group_id>', methods=['POST'])
     def join_user_group(user_id, group_id):
-=======
-
-    @app.route('/posts/users/<user_id>/groups/<group_id>', methods=['POST'])
-    def create_post(user_id, group_id):
->>>>>>> b8d6c4dbda5ce5a262072c10c011e49b9c623e91
         error_404 = False
         try:
             user = User.query.filter(User.id == user_id).one_or_none()
@@ -466,35 +422,11 @@ def create_app(test_config=None):
                 error_404 = True
                 abort(404)
 
-<<<<<<< HEAD
             groupuser = GroupUser(user_id = user_id, group_id = group_id)
             groupuser.insert()
 
             return jsonify({
                 'success': True
-=======
-            body = request.get_json()
-
-            title = body.get('title', None)
-            content = body.get('content', None)
-
-            if title is None or content is None:
-                error_404 = True
-                abort(404)
-
-            post = Post(title=title, content=content,
-                        user_id=user_id, group_id=group_id)
-
-            post_id = post.insert()
-
-            selection = [post for post in Post.query.order_by('id').all(
-            ) if post.group_id == group_id and post.user_id == user_id]
-            #current_posts = pagination(request=request, selection=selection)
-            return jsonify({
-                'success': True,
-                'id': post_id,
-                'posts': selection
->>>>>>> b8d6c4dbda5ce5a262072c10c011e49b9c623e91
             })
 
         except Exception as e:
@@ -504,7 +436,6 @@ def create_app(test_config=None):
             else:
                 abort(500)
 
-<<<<<<< HEAD
     #* BORRAR USUARIOS DE UN GRUPO
     @app.route('/group/<int:group_id>/user/<int:user_id>', methods=['DELETE'])
     def delete_user_from_group(group_id, user_id):
@@ -513,55 +444,15 @@ def create_app(test_config=None):
             user = User.query.filter(User.id == user_id).one_or_none()
             group = Group.query.filter(Group.id == group_id).one_or_none()
 
-=======
-    @app.route('/posts', methods=['GET'])
-    def get_all_posts():
-        selection = Post.query.order_by('id').all()
-        posts = pagination(request, selection)
-
-        if len(posts) == 0:
-            abort(404)
-
-        return jsonify({
-            'success': True,
-            'posts': posts,
-            'amount_posts': len(selection)
-        })
-
-    @app.route('/posts/users/<user_id>/groups/<group_id>', methods=['GET'])
-    def get_posts_by_group_and_user(user_id, group_id):
-        error_404 = False
-        try:
-            user = User.query.filter(User.id==user_id).one_or_none()
-            group = Group.query.filter(Group.id==group_id).one_or_none()
-            
->>>>>>> b8d6c4dbda5ce5a262072c10c011e49b9c623e91
             if user is None or group is None:
                 error_404 = True
                 abort(404)
 
-<<<<<<< HEAD
             groupuser = GroupUser.query.filter(GroupUser.user_id == user_id and GroupUser.group_id == group_id).one_or_none()
             groupuser.delete()
 
             return jsonify({
                 'success': True
-=======
-            print(group_id, user_id)
-
-            selection = Post.query.order_by('id').all()
-
-            #current_posts = pagination(request=request, selection=selection)
-
-            if len(selection) == 0:
-                error_404 = True
-                abort(404)
-
-            return jsonify({
-                'success': True,
-                'posts': [post for post in selection if (post["group_id"] == group_id and post["user_id"] == user_id)],
-                'total_posts': len(selection)
->>>>>>> b8d6c4dbda5ce5a262072c10c011e49b9c623e91
             })
 
         except Exception as e:
@@ -570,25 +461,6 @@ def create_app(test_config=None):
                 abort(404)
             else:
                 abort(500)
-<<<<<<< HEAD
-=======
-
-    @app.route('/user/<user_id>/group/<group_id>', methods=['POST'])
-    def join_user_group():
-        error_404 = False
-        try:
-            pass
-        except Exception as e:
-            print(e)
-            if error_404:
-                abort(404)
-            else:
-                abort(500)
-
-    @app.route('/group/<group_id>/user/<user_id>', methods=['GET'])
-    def get_user_posts():
-        pass
->>>>>>> b8d6c4dbda5ce5a262072c10c011e49b9c623e91
 
     # ! ERROR HANDLERS
     @app.errorhandler(404)
