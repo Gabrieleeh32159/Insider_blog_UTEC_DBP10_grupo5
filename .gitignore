@@ -3,3 +3,4 @@ venv/*
 __pycache__/*
 insider_blog_frontend/__pycache__/*
 insider_blog_backend/server/__pycache__/*
+insider_blog_backend/__pycache__/*
