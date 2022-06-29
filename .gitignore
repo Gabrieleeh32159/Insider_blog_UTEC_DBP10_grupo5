@@ -1,4 +1,5 @@
-insider_blog_frontend/*
+insider_blog_frontend/node_modules/*
 venv/*
 __pycache__/*
-server/__pycache__/*
+insider_blog_frontend/__pycache__/*
+insider_blog_backend/server/__pycache__/*
