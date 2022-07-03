@@ -5,12 +5,14 @@ import base64
 
 db_name = "proyecto"
 password = os.environ.get('pg_pass')
-port = 5432
+port = 9173
 db_path='postgresql://postgres:{}@localhost:{}/{}'.format(password,port,db_name)
+secret_key = 'DBPPr0y3ct70F1n4l'
 
 db = SQLAlchemy()
 
 def setup_db(app, database_path=db_path):
+    app.config['SECRET_KEY']=secret_key
     app.config['SQLALCHEMY_DATABASE_URI']=db_path
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS']=False
     db.app=app
@@ -20,6 +22,7 @@ def setup_db(app, database_path=db_path):
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key = True, nullable= True)
+    public_id = db.Column(db.String(200), nullable=False)
     username = db.Column(db.String(20), unique = True, autoincrement = True, nullable = False)
     description = db.Column(db.Text, default='')
     email = db.Column(db.String(120), unique = True, nullable = False)
@@ -33,8 +36,9 @@ class User(db.Model):
             db.session.add(self)
             db.session.commit()
             return self.id
-        except:
+        except Exception as e:
             db.session.rollback()
+            print(e)
         finally:
             db.session.close()
 
@@ -56,7 +60,7 @@ class User(db.Model):
             db.session.close()
 
     def __repr__(self):
-        return f"User('{self.username}', '{self.email}', '{self.image_file}')"
+        return f"User('{self.username}', \nEmail:'{self.email}', \nDescription:'{self.description}' \nPass:'{self.password}' \nPublic_id:'{self.public_id}' \nImg:'{self.image_file}')"
 
     def format(self):
         return{

@@ -4,7 +4,7 @@
       <router-link to="/">
         <img
           class="rounded-circle article-img"
-          src="../assets/logo.png"
+          src="../assets/default.jpg"
           style="height: 65px; border-radius: 65px"
         />
       </router-link>
@@ -27,7 +27,7 @@
       <router-link to="/">
         <img
           class="rounded-circle article-img"
-          src="../assets/logo.png"
+          src="../assets/default.jpg"
           style="height: 65px; border-radius: 65px"
         />
       </router-link>
@@ -50,7 +50,7 @@
       <router-link to="/">
         <img
           class="rounded-circle article-img"
-          src="../assets/logo.png"
+          src="../assets/default.jpg"
           style="height: 65px; border-radius: 65px"
         />
       </router-link>
@@ -73,7 +73,7 @@
       <router-link to="/">
         <img
           class="rounded-circle article-img"
-          src="../assets/logo.png"
+          src="../assets/default.jpg"
           style="height: 65px; border-radius: 65px"
         />
       </router-link>
