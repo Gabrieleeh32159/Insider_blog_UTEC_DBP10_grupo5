@@ -2,25 +2,23 @@
   <div class="groups">
     <h2>Grupos</h2>
     <p>Estos son los grupos a los que perteneces actualmente.</p>
-    <li v-if="user" v-for="group in user.groups_ids">
-      <router-link to="/group/:group">{{group}}</router-link>
-    </li>
+    <div v-if="user">
+      <li v-for="group in user.groups_ids" v-bind:key="group">
+        <router-link to="/group/:group">{{ group }}</router-link>
+      </li>
+    </div>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import store from "@/vuex.js"
-import { toDecodedMap } from '@jridgewell/gen-mapping';
-import { getOuterBindingIdentifiers } from '@babel/types';
+import { mapGetters } from "vuex";
 
 export default {
   name: "TheGroups",
-  computed:{
-    ...mapGetters(['user']),
+  computed: {
+    ...mapGetters(["user"]),
   },
 };
-
 </script>
 
 <style>

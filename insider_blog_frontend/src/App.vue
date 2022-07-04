@@ -1,36 +1,36 @@
 <template>
-
   <TheNavigation />
   <div class="algo">
     <router-view v-bind:key="$route.path" />
     <TheGroups />
   </div>
-
 </template>
 
 <script>
 import TheNavigation from "./components/TheNavigation.vue";
 import TheGroups from "./components/TheGroups.vue";
-import axios from 'axios'
-import store from "./vuex";
+import axios from "axios";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     TheNavigation,
     TheGroups,
   },
-  async created(){
-    if(localStorage.getItem('token' !== null)){
-      const response = await axios.get('/user', {
-        headers:{ 
-          Authorization: 'Bearer ' + localStorage.getItem('token')
-        }
-      });
-      this.$store.dispatch('user', response.data);
-    };
-  },
+  async created() {
+    const post_response = await axios.get("/posts");
+    const posts = post_response.data.posts;
+    this.$store.dispatch("posts", posts)
 
+    if (localStorage.getItem("token" !== null)) {
+      const response = await axios.get("/user", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      });
+      this.$store.dispatch("user", response.data);
+    }
+  },
 };
 </script>
 
@@ -54,7 +54,12 @@ body {
   margin-top: 5rem;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: #444444;
 }
 
@@ -106,7 +111,7 @@ a.article-title:hover {
 .article-metadata {
   padding-bottom: 1px;
   margin-bottom: 4px;
-  border-bottom: 1px solid #e3e3e3
+  border-bottom: 1px solid #e3e3e3;
 }
 
 .article-metadata a:hover {
@@ -129,5 +134,4 @@ a.article-title:hover {
 .account-heading {
   font-size: 2.5rem;
 }
-
 </style>

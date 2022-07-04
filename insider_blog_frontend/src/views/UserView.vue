@@ -1,12 +1,7 @@
 <template>
-<h2> Gabriel </h2>
-
+  <h2>Gabriel</h2>
 </template>
 
-<script>
+<script></script>
 
-</script>
-
-<style scoped>
-
-</style>
+<style scoped></style>
