@@ -22,12 +22,7 @@ export default {
   data() {
     return {};
   },
-  props: {
-    slug: {
-      type: String,
-      required: true,
-    },
-  },
+  props: {},
   computed: {
     ...mapGetters(["user"]),
     ...mapGetters(["groups"]),

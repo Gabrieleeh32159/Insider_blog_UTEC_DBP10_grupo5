@@ -59,6 +59,7 @@ const routes = [
   {
     path: "/edit/:slug",
     name: "edit",
+    props: true,
     component: () => import("../views/EditView.vue"),
   },
 ];

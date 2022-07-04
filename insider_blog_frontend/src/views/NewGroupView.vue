@@ -31,14 +31,6 @@ export default {
       user: "user",
     }),
   },
-  methods: {
-    async handleSubmit() {
-      const response = await axios.post("/groups", {
-        headers: {},
-      });
-      console.log(response.headers);
-    },
-  },
 };
 </script>
 
