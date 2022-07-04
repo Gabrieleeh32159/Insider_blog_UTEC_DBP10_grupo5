@@ -2,7 +2,10 @@
   <div id="nav">
     <div class="horizontal">
       <router-link to="/">
-        <img src="../assets/logo.png" style="height: 40px; border-radius: 20px" />
+        <img
+          src="../assets/logo.png"
+          style="height: 40px; border-radius: 20px"
+        />
       </router-link>
       <router-link to="/">Inicio</router-link>
       <router-link to="/about">Sobre Nosotros</router-link>
@@ -13,9 +16,11 @@
       <router-link to="/joingroup">Unirse a un grupo</router-link>
       <router-link to="/newgroup">Crear un grupo</router-link>
       <router-link :to="{ name: 'Users', params: { slug: user.id } }">{{
-          user.username
+        user.username
       }}</router-link>
-      <a href="javascript:void(0)" @click="handleClick" class="nav0link">Logout</a>
+      <a href="javascript:void(0)" @click="handleClick" class="nav0link"
+        >Logout</a
+      >
     </div>
     <div class="horizontal" v-if="!user">
       <router-link to="/login">Login</router-link>
@@ -35,7 +40,7 @@ import store from "@/vuex"
 export default {
   name: "TheNavigation",
   data() {
-    return {
+    return{
       users: store.users,
     };
   },

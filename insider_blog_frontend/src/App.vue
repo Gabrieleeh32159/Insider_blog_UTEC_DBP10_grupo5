@@ -51,7 +51,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: left;
 }
-
 .algo {
   display: flex;
   justify-content: space-between;
