@@ -1,3 +1,4 @@
+
 <template>
   <div class="container">
     <div class="account-info">
@@ -9,11 +10,11 @@
     </div>
     <div v-if="user">
       <form @submit="handleSubmit">
-        <div v-if="this.user.id == this.slug" class="form-group">
-          <router-link :to="{ name: 'edit', params: { slug: this.user.id } }">
-            <button class="btn btn-primary btn-block">Edit</button>
-          </router-link>
-        </div>
+      <div v-if="this.user.id == this.slug" class="form-group">
+        <router-link :to="{name: 'edit', params: {slug: this.user.id}}"> 
+          <button class="btn btn-primary btn-block">Edit</button>
+        </router-link>
+      </div>
       </form>
     </div>
   </div>
@@ -31,11 +32,15 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["user"]),
+    ...mapGetters(['user']),
     user_f() {
-      return store.state.users.find((d) => d.id == this.slug);
-    },
+      return store.state.users.find((d) => d.id == this.slug)
+    }
   },
+  created(){
+    console.log(store.state.users)
+    console.log("AAAAAAAAAAAAAAAAAAAAAA",this.slug)
+  }
 };
 </script>
 

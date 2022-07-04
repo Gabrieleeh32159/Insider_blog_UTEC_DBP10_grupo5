@@ -1,7 +1,9 @@
+<<<<<<< HEAD
 from argparse import _AttributeHolder
 from datetime import datetime, timedelta
 import json
 import uuid
+import psycopg2
 from flask import (
     Flask,
     abort,
@@ -579,6 +581,15 @@ def create_app(test_config=None):
             'code': 500,
             'message': 'Internal Server error'
         }), 500
+        
+
+    @app.errorhandler(422)
+    def unprocessable(error):
+        return jsonify({
+            'success': False,
+            'code': 422,
+            'message': 'Unprocessable'
+        }), 422
 
 
     @app.route('/')

@@ -36,6 +36,7 @@ export default {
         },
       });
       this.$store.dispatch("user", response.data);
+      console.log(response.data);
     }
   },
 };
