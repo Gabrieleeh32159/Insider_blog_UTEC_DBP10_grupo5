@@ -1,15 +1,21 @@
-from sre_constants import SUCCESS
+from argparse import _AttributeHolder
+from datetime import datetime, timedelta
+import json
+import uuid
 from flask import (
     Flask,
     abort,
     jsonify,
+    make_response,
     request
 )
+import jwt
+from functools import wraps
 from flask_cors import CORS
+from werkzeug.security import generate_password_hash, check_password_hash
 from models import setup_db, User, Post, GroupUser, Group
-import base64
 
-default_image = base64.b64encode(open('server/imagenes/default.jpg', 'rb').read()).decode('utf-8')
+default_image = 'default.jpg'
 
 items_per_page = 5
 
@@ -32,21 +38,41 @@ def pagination(request, selection, decreasing = False):
     current = items[start:end]
     return current
 
-def encriptar(palabra):
-    return base64.b64encode(palabra.encode('UTF-8'))
-
 def create_app(test_config=None):
     app = Flask(__name__)
     setup_db(app)
-    CORS(app,origin=['https://utec.edu.pe'], max_age=10)
+    CORS(app,origin=['http://localhost:3000'], max_age=10)
 
     @app.after_request
     def after_request(response):
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorizations, true')
-        response.headers.add('Access-Control-Allow-Methods', 'GET,PATCH,POST,OPTIONS')
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Headers', '*')
+        response.headers.add('Access-Control-Allow-Methods', '*')
         return response
-    
+
     #*USERS
+
+    def token_required(f):
+        @wraps(f)
+        def decorator(*args, **kwargs):
+            token = None
+            if 'x-access-tokens' in request.headers:
+                token = request.headers['x-access-tokens']
+            
+            if not token:
+                return jsonify({'message': 'a valid token is missing'})
+
+            try:
+                data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+                current_user = User.query.filter_by(public_id=data['public_id']).first()
+                if current_user is None:
+                    return jsonify({'message': 'token is invalid'})
+            except Exception as e:
+                print(e)
+                return jsonify({'message': 'token is invalid'})
+
+            return f(current_user, *args, **kwargs)
+        return decorator
 
     @app.route('/users', methods=['GET'])
     def get_users():
@@ -62,6 +88,28 @@ def create_app(test_config=None):
             'amount_users': len(selection)
         })
 
+    @app.route('/signup', methods=['GET','POST'])
+    def signup():
+        body = request.get_json()
+
+        username = body.get('username', None)
+        description = body.get('description', '')
+        email = body.get('email',None)
+        password = body.get('password',None)
+        image = body.get('image', default_image)
+
+        if username is None or email is None or password is None:
+            abort(422)
+
+        hashed_password = generate_password_hash(body['password'], method='sha256')
+
+        user = User(public_id=str(uuid.uuid4()), username=username, description = description, email=email, password=hashed_password, image_file = image)
+       
+        user.insert()
+        return jsonify({
+            'success': True
+        })
+
     @app.route('/users', methods=['POST'])
     def create_user():
         body = request.get_json()
@@ -75,9 +123,14 @@ def create_app(test_config=None):
         if username is None or email is None or password is None:
             abort(422)
 
-        user = User(username=username, description = description, email=email, password=encriptar(password), image_file = image)
+        hashed_password = generate_password_hash(body['password'], method='sha256')
+
+        user = User(public_id=str(uuid.uuid4()), username=username, description = description, email=email, password=hashed_password, image_file = image)
+
+        print(user)
 
         user.insert()
+
         new_user_id = user.id
         group_user = GroupUser(group_id = 0, user_id = new_user_id)
         group_user.insert()
@@ -91,6 +144,40 @@ def create_app(test_config=None):
             'users': current_users,
             'total_users': len(selection)
         })
+
+    @app.route('/user', methods=['GET'])
+    def verify():
+        auth = request.headers['Authorization']
+        if auth is None:
+            return make_response('No auth', 403, {'WWW.Authentication': 'Token Required'})
+        
+        token = auth.replace('Bearer ', '')
+ 
+        print(token)
+
+        data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+        current_user = User.query.filter_by(public_id=data['public_id']).first()
+        if current_user is None:
+            return jsonify({'message': 'token is invalid'})
+
+        return current_user.format()
+
+    @app.route('/login', methods=['GET', 'POST'])
+    def login_user():
+        auth = request.authorization
+        if not auth or not auth.username or not auth.password:
+            return make_response('could not verify', 401, {'WWW.Authentication': 'Basic realm: "login required"'})
+
+        user = User.query.filter_by(username=auth.username).first()
+
+        if check_password_hash(user.password, auth.password):
+            token = jwt.encode({'public_id': user.public_id, 'exp': datetime.utcnow() + timedelta(minutes=30)}, app.config['SECRET_KEY'])
+            return jsonify({
+                'token' : token,
+                'user': user.format()
+            })
+
+        return make_response('could not verify', 401, {'WWW.Authentication': 'Basic realm: "login required"'})
 
     @app.route('/users/<user_id>', methods=['PATCH'])
     def update_user(user_id):
@@ -160,28 +247,34 @@ def create_app(test_config=None):
     #* GROUPS
 
     @app.route('/groups', methods=['POST'])
-    def create_group():
-        body = request.get_json()
+    @token_required
+    def create_group(current_user):
+        try:
+            body = request.get_json()
 
-        groupname = body.get('groupname', None)
+            groupname = body.get('groupname', None)
 
-        if groupname is None:
-            abort(422)
+            if groupname is None:
+                abort(422)
 
-        group = Group(group_name=groupname)
+            group = Group(group_name=groupname)
 
-        group.insert()
-        new_user_id = group.id
+            group.insert()
+            new_user_id = group.id
 
-        selection = Group.query.order_by('id').all()
-        current_groups = pagination(request, selection)
+            selection = Group.query.order_by('id').all()
+            current_groups = pagination(request, selection)
 
-        return jsonify({
-            'success':True,
-            'created':new_user_id,
-            'groups': current_groups,
-            'total_groups': len(selection)
-        })
+            return jsonify({
+                'success':True,
+                'created':new_user_id,
+                'groups': current_groups,
+                'total_groups': len(selection)
+            })
+        except Exception as e:
+            print(e)
+            abort(500)
+
 
     @app.route('/groups', methods=['GET'])
     def get_groups():

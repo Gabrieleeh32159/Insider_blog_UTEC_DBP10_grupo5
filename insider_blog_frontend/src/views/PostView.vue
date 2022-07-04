@@ -1,20 +1,5 @@
-<script setup>
-  const posts = {
-    0: {username: 'Gabriel', title: 'Gab', contenido: 'brielbrielbriel ga b r i e l bag riel' },
-    1: {username: 'Poalo', title: 'Pal', conteindo: 'olo pa oalo oalaopa oalopal aop'},
-    2: {username: 'Marcelo', title: 'Mar', contenido: 'celo mar cleo ma rl e ocl ame clo rm'},
-    3: {username: 'Martin', title: 'Mrt', contenido: 'ain mar aistn in antaitn4'}
-  }
-  console.log(posts)
-</script>
-
 <template>
-  <div>
-    <h3 v-if="user">Hi, {{ user.username }}</h3>
-    <h3 v-if="!user">You are not logged in!</h3>
-  </div>
-  <div class="posts">
-    <div v-for="item in posts"> 
+<div class="posts">
       <article class="post-info">
         <router-link to="/user/:user">
           <img
@@ -26,49 +11,26 @@
 
         <div class="media-body">
           <div class="article-metadata">
-            <router-link to="/user/:user">{{item.username}}</router-link>
+            <router-link to="/user/:user">Gabriel</router-link>
             <small class="text-muted"> 2022-06-28 </small>
           </div>
           <h2>
             <router-link to="/post/:post" class="article-title">
-              {{item.title}};
+              Nuevo Post;
             </router-link>
           </h2>
-          <p class="article-content">{{item.contenido}}</p>
+          <p class="article-content">Marvin danos mas tiempo mavin danos mas tiempo marvin danos mas tiempo</p>
         </div>
       </article>
     </div>
-  </div>
+
 </template>
 
-
-
 <script>
-import axios from 'axios';
-import { mapGetters } from 'vuex';
 
-export default {
-  name: "Home",
-  computed:{
-    ...mapGetters(['user'])
-  },
-};
+
 
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 <style scoped>
 .posts {
