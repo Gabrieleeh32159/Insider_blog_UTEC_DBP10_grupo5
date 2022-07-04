@@ -63,14 +63,14 @@ export default {
   },
   methods: {
     async handleSubmit() {
-      if(this.password == this.confirm_pass){
-          await axios.post("/users", {
-            username: this.username,
-            email: this.email,
-            password: this.password,
-          });
+      if (this.password == this.confirm_pass) {
+        await axios.post("/users", {
+          username: this.username,
+          email: this.email,
+          password: this.password,
+        });
         await router.push("/login");
-      };
+      }
     },
   },
 };
