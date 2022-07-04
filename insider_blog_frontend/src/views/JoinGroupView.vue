@@ -4,12 +4,9 @@
       <h3>Unirse a un grupo</h3>
       <div class="content-section">
         <div class="form-group">
-          <label>Group</label>
-          <select class="form-control form-control-lg" v-model="group">
-            <option selected>General</option>
-          </select>
+          <label>Grupo</label>
+          <input type="group" name="group" v-model="group" class="form-control" />
         </div>
-
         <div class="form-group">
           <button class="btn btn-primary btn-block">Create</button>
         </div>
@@ -38,10 +35,11 @@ export default {
   },
   methods: {
     async handleSubmit() {
-      let response = await axios.post(
-        `"http://127.0.0.1:5000/user/${this.user.id}/group/${this.group}"`
+      console.log("user", this.user.id)
+      console.log("group!!!", this.group)
+      await axios.post(
+        "/user/"+this.user.id+"/group/"+this.group
       );
-      console.log(response);
       //this.$store.dispatch("posts", posts);
       await router.push("/");
     },

@@ -17,7 +17,6 @@
 </template>
 
 <script>
-import router from "@/router";
 import axios from "axios";
 import { mapGetters } from "vuex";
 export default {
@@ -34,20 +33,10 @@ export default {
   },
   methods: {
     async handleSubmit() {
-      /*
-      await fetch("http://127.0.0.1:5000/groups", {
-        method: "POST",
-        body: {
-          groupname: this.group_name,
-        },
-        mode: "no-cors",
-      }).then((response) => console.log(response.body));
-      */
-
-      await axios.post("/groups", {
-        group_name: this.group_name,
+      const response = await axios.post("/groups", {
+        headers : {
+        }
       });
-      await router.push("/");
     },
   },
 };

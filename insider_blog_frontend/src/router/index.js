@@ -56,6 +56,12 @@ const routes = [
     name: "joingroup",
     component: () => import("../views/JoinGroupView.vue"),
   },
+  {
+    path: "/edit/:slug",
+    name: "edit",
+    props: true,
+    component: () => import("../views/EditView.vue"),
+  }
 ];
 
 const router = createRouter({

@@ -17,14 +17,15 @@
           <textarea
             class="form-control form-control-lg"
             v-model="content"
-            placeholder="Escriba el contenido de la publicación"
           ></textarea>
         </div>
 
         <div class="form-group">
           <label>Group</label>
           <select class="form-control form-control-lg" v-model="group">
-            <option selected>General</option>
+              <option v-for="group_name in user.groups_ids " 
+                value={{group(group_name)}}
+                >{{group_name}}</option>
           </select>
         </div>
 
@@ -38,6 +39,7 @@
 
 <script>
 import router from "@/router";
+import store from "@/vuex";
 import axios from "axios";
 import { mapGetters } from "vuex";
 export default {
@@ -50,17 +52,20 @@ export default {
     };
   },
   computed: {
-    ...mapGetters({
-      user: "user",
-    }),
+    user(){
+      return store.state.user
+    },
+    group(search) {
+      return store.state.groups.find((g) => g.group_name === search)
+    }
   },
   methods: {
     async handleSubmit() {
       await axios.post("http://127.0.0.1:5000/posts", {
         title: this.title,
         content: this.content,
-        user_id: this.user.id,
-        group_id: 0,
+        user_id: store.state.user.id,
+        group_id: this.group,
       });
       await router.push("/");
     },

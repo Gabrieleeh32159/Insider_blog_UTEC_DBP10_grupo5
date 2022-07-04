@@ -12,6 +12,7 @@ from flask import (
 import jwt
 from functools import wraps
 from flask_cors import CORS
+from sqlalchemy import false, true
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import setup_db, User, Post, GroupUser, Group
 
@@ -80,16 +81,14 @@ def create_app(test_config=None):
 
     @app.route('/users', methods=['GET'])
     def get_users():
-        selection = User.query.order_by('id').all()
-        users = pagination(request, selection)
-
+        users = [user.format() for user in User.query.order_by('id').all()]
         if len(users) == 0:
             abort(404)
         
         return jsonify({
             'success': True,
             'users': users,
-            'amount_users': len(selection)
+            'amount_users': len(users)
         })
 
     @app.route('/signup', methods=['GET','POST'])
@@ -199,7 +198,8 @@ def create_app(test_config=None):
             if 'email' in body:
                 user.email = body.get('email')
             if 'password' in body:
-                user.password = body.get('password')
+                hashed_password = generate_password_hash(body.get('password'), method='sha256')
+                user.password = hashed_password
             if 'description' in body:
                 user.description = body.get('description')
             if 'image' in body:
@@ -209,7 +209,8 @@ def create_app(test_config=None):
 
             return jsonify({
                 'success': True,
-                'id': user_id
+                'id': user_id,
+                'body': body
             })
 
         except Exception as e:

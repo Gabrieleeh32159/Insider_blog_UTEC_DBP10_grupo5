@@ -36,9 +36,14 @@
 
 <script>
 import { mapGetters } from "vuex";
+import store from "@/vuex"
 export default {
   name: "TheNavigation",
-
+  data() {
+    return{
+      users: store.users,
+    };
+  },
   methods: {
     handleClick() {
       localStorage.removeItem("token");

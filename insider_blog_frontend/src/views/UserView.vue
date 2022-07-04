@@ -1,28 +1,46 @@
+
 <template>
   <div class="container">
     <div class="account-info">
       <img class="account-img" src="../assets/default.jpg" />
       <div class="media-body">
-        <h2 class="account-heading mt-lg-4">{{ user.username }}</h2>
-        <p class="text-secondary">{{ user.email }}</p>
+        <h2 class="account-heading mt-lg-4">{{ user_f.username }}</h2>
+        <p class="text-secondary">{{ user_f.email }}</p>
       </div>
     </div>
-    <div class="form-group">
-      <button class="btn btn-primary btn-block">Edit</button>
+    <div v-if="user">
+      <form @submit="handleSubmit">
+      <div v-if="this.user.id == this.slug" class="form-group">
+        <router-link :to="{name: 'edit', params: {slug: this.user.id}}"> 
+          <button class="btn btn-primary btn-block">Edit</button>
+        </router-link>
+      </div>
+      </form>
     </div>
   </div>
 </template>
 
 <script>
+import store from "@/vuex";
 import { mapGetters } from "vuex";
-
 export default {
   name: "UserAccount",
-  computed: {
-    ...mapGetters({
-      user: "user",
-    }),
+  props: {
+    slug: {
+      type: String,
+      required: true,
+    },
   },
+  computed: {
+    ...mapGetters(['user']),
+    user_f() {
+      return store.state.users.find((d) => d.id == this.slug)
+    }
+  },
+  created(){
+    console.log(store.state.users)
+    console.log("AAAAAAAAAAAAAAAAAAAAAA",this.slug)
+  }
 };
 </script>
 

@@ -1,36 +1,43 @@
 <template>
   <div class="posts">
-    <h2>General</h2>
+    <h2>{{this.slug}}</h2>
     <div v-for="item in posts" v-bind:key="item.user_id">
       <div v-if="item.group_id === 0">
-        <article class="post-info">
-          <router-link to="/user:/user">
-            <img
-              class="rounded-circle article-img"
-              src="../assets/default.jpg"
-              style="height: 65px; border-radius: 65px"
-            />
-          </router-link>
+      <article class="post-info">
+        <router-link :to="{ name: 'Users', params: { slug: item.user_id } }">
+          <img
+            class="rounded-circle article-img"
+            src="../assets/default.jpg"
+            style="height: 65px; border-radius: 65px"
+          />
+        </router-link>
 
-          <div class="media-body">
-            <div class="article-metadata">
-              <router-link to="/user/:user">{{ item.user_id }}</router-link>
-              <small class="text-muted"> 2022-06-28 </small>
-            </div>
-            <h2>
-              <router-link to="/post/:post" class="article-title">
-                {{ item.title }};
-              </router-link>
-            </h2>
-            <p class="article-content">{{ item.content }}</p>
+        <div class="media-body">
+          <div class="article-metadata">
+            <router-link
+              :to="{ name: 'Users', params: { slug: item.user_id } }"
+              >{{ item.author_name }}</router-link
+            >
+            <small class="text-muted"> 2022-06-28 </small>
           </div>
-        </article>
+          <h2>
+            <router-link
+              :to="{ name: 'Posts', params: { slug: item.id } }"
+              class="article-title"
+            >
+              {{ item.title }};
+            </router-link>
+          </h2>
+          <p class="article-content">{{ item.content }}</p>
+        </div>
+      </article>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import store from "@/vuex";
 import { mapGetters } from "vuex";
 
 export default {
@@ -43,20 +50,8 @@ export default {
   },
   computed: {
     ...mapGetters(["user"]),
-    ...mapGetters(["posts"]),
     ...mapGetters(["groups"]),
-    name_id() {
-      console.log(this.posts);
-      return this.posts.find((p) => p.group_id === this.slug);
-    },
-  },
-  created() {
-    for (var i = 0; i < this.groups.length; i++) {
-      if (this.groups[i].group_name === this.slug) {
-        //const id = this.groups[i].id;
-      }
-    }
-    console.log(this.slug);
+    ...mapGetters(["posts"]),
   },
 };
 </script>
