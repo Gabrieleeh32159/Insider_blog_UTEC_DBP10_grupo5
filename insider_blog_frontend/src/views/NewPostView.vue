@@ -60,9 +60,8 @@ export default {
     },
 
     group(search) {
-      return store.state.groups.find((g) => g.group_name === search)
-    }
-
+      return store.state.groups.find((g) => g.group_name === search);
+    },
   },
   methods: {
     async handleSubmit() {

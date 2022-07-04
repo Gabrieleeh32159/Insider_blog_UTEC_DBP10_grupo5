@@ -37,7 +37,7 @@
 </template>
 
 <script>
-//import store from "@/vuex";
+import store from "@/vuex";
 import { mapGetters } from "vuex";
 
 export default {
