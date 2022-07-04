@@ -5,7 +5,12 @@
       <div class="content-section">
         <div class="form-group">
           <label>Grupo</label>
-          <input type="group" name="group" v-model="group" class="form-control" />
+          <input
+            type="group"
+            name="group"
+            v-model="group"
+            class="form-control"
+          />
         </div>
         <div class="form-group">
           <button class="btn btn-primary btn-block">Create</button>
@@ -35,11 +40,9 @@ export default {
   },
   methods: {
     async handleSubmit() {
-      console.log("user", this.user.id)
-      console.log("group!!!", this.group)
-      await axios.post(
-        "/user/"+this.user.id+"/group/"+this.group
-      );
+      console.log("user", this.user.id);
+      console.log("group!!!", this.group);
+      await axios.post("/user/" + this.user.id + "/group/" + this.group);
       //this.$store.dispatch("posts", posts);
       await router.push("/");
     },
