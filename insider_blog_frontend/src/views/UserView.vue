@@ -37,10 +37,6 @@ export default {
       return store.state.users.find((d) => d.id == this.slug)
     }
   },
-  created(){
-    console.log(store.state.users)
-    console.log("AAAAAAAAAAAAAAAAAAAAAA",this.slug)
-  }
 };
 </script>
 
