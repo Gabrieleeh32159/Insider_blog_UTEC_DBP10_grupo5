@@ -1,11 +1,27 @@
 <script setup>
-  const posts = {
-    0: {username: 'Gabriel', title: 'Gab', contenido: 'brielbrielbriel ga b r i e l bag riel' },
-    1: {username: 'Poalo', title: 'Pal', conteindo: 'olo pa oalo oalaopa oalopal aop'},
-    2: {username: 'Marcelo', title: 'Mar', contenido: 'celo mar cleo ma rl e ocl ame clo rm'},
-    3: {username: 'Martin', title: 'Mrt', contenido: 'ain mar aistn in antaitn4'}
-  }
-  console.log(posts)
+const posts = {
+  0: {
+    username: "Gabriel",
+    title: "Gab",
+    contenido: "brielbrielbriel ga b r i e l bag riel",
+  },
+  1: {
+    username: "Poalo",
+    title: "Pal",
+    conteindo: "olo pa oalo oalaopa oalopal aop",
+  },
+  2: {
+    username: "Marcelo",
+    title: "Mar",
+    contenido: "celo mar cleo ma rl e ocl ame clo rm",
+  },
+  3: {
+    username: "Martin",
+    title: "Mrt",
+    contenido: "ain mar aistn in antaitn4",
+  },
+};
+console.log(posts);
 </script>
 
 <template>
@@ -14,7 +30,7 @@
     <h3 v-if="!user">You are not logged in!</h3>
   </div>
   <div class="posts">
-    <div v-for="item in posts"> 
+    <div v-for="item in posts" v-bind:key="item.username">
       <article class="post-info">
         <router-link to="/user/:user">
           <img
@@ -26,49 +42,31 @@
 
         <div class="media-body">
           <div class="article-metadata">
-            <router-link to="/user/:user">{{item.username}}</router-link>
+            <router-link to="/user/:user">{{ item.username }}</router-link>
             <small class="text-muted"> 2022-06-28 </small>
           </div>
           <h2>
             <router-link to="/post/:post" class="article-title">
-              {{item.title}};
+              {{ item.title }};
             </router-link>
           </h2>
-          <p class="article-content">{{item.contenido}}</p>
+          <p class="article-content">{{ item.contenido }}</p>
         </div>
       </article>
     </div>
   </div>
 </template>
 
-
-
 <script>
-import axios from 'axios';
-import { mapGetters } from 'vuex';
+import { mapGetters } from "vuex";
 
 export default {
   name: "Home",
-  computed:{
-    ...mapGetters(['user'])
+  computed: {
+    ...mapGetters(["user"]),
   },
 };
-
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 <style scoped>
 .posts {

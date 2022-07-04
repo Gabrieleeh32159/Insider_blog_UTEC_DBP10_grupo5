@@ -369,6 +369,7 @@ def create_app(test_config=None):
             
             if user is None or group is None:
                 error_404 = True
+                print('404')
                 abort(404)
 
             body = request.get_json()

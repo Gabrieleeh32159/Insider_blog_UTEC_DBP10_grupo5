@@ -1,36 +1,33 @@
 <template>
-<div class="posts">
-      <article class="post-info">
-        <router-link to="/user/:user">
-          <img
-            class="rounded-circle article-img"
-            src="../assets/default.jpg"
-            style="height: 65px; border-radius: 65px"
-          />
-        </router-link>
+  <div class="posts">
+    <article class="post-info">
+      <router-link to="/user/:user">
+        <img
+          class="rounded-circle article-img"
+          src="../assets/default.jpg"
+          style="height: 65px; border-radius: 65px"
+        />
+      </router-link>
 
-        <div class="media-body">
-          <div class="article-metadata">
-            <router-link to="/user/:user">Gabriel</router-link>
-            <small class="text-muted"> 2022-06-28 </small>
-          </div>
-          <h2>
-            <router-link to="/post/:post" class="article-title">
-              Nuevo Post;
-            </router-link>
-          </h2>
-          <p class="article-content">Marvin danos mas tiempo mavin danos mas tiempo marvin danos mas tiempo</p>
+      <div class="media-body">
+        <div class="article-metadata">
+          <router-link to="/user/:user">Gabriel</router-link>
+          <small class="text-muted"> 2022-06-28 </small>
         </div>
-      </article>
-    </div>
-
+        <h2>
+          <router-link to="/post/:post" class="article-title">
+            Nuevo Post;
+          </router-link>
+        </h2>
+        <p class="article-content">
+          Marvin danos mas tiempo mavin danos mas tiempo marvin danos mas tiempo
+        </p>
+      </div>
+    </article>
+  </div>
 </template>
 
-<script>
-
-
-
-</script>
+<script></script>
 
 <style scoped>
 .posts {
