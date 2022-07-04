@@ -26,16 +26,19 @@
             <button class="btn btn-primary btn-block" v-on:click="handleSubmit()" >Sign Up</button>
         </div>
     </form>
+    <p v-if="showError" id="error">Error!!!</p>
     </header>
 </template>
 
 <script>
 // Aca deberiamos mandar a la api los datos del usuario pa crear
+import router from '@/router';
 import axios from 'axios'
 import VueAxios from 'vue-axios'
     export default
     {
         name: 'Register',
+        compontents: {},
         data() {
             return {
                 username: "",
@@ -45,11 +48,17 @@ import VueAxios from 'vue-axios'
         },
         methods: {
             async handleSubmit(){
-                await axios.post('http://127.0.0.1:5000/users',{
-                    username: this.username,
-                    email: this.email,
-                    password: this.password
-                })
+                try{
+                    await axios.post('/users',{
+                        username: this.username,
+                        email: this.email,
+                        password: this.password
+                    })
+                    this.showError = false;
+                } catch(error) {
+                    this.showError = true
+                }
+                await router.push('/login');
             },
         }
     }

@@ -2,21 +2,15 @@
   const posts = {
     0: {username: 'Gabriel', title: 'Gab', contenido: 'brielbrielbriel ga b r i e l bag riel' },
     1: {username: 'Poalo', title: 'Pal', conteindo: 'olo pa oalo oalaopa oalopal aop'},
-    2: {username: 'Marcelo', title: 'Mar', contenido: 'celo mar cleo ma rl e ocl ame clo rm'},
-    3: {username: 'Martin', title: 'Mrt', contenido: 'ain mar aistn in antaitn4'}
   }
-  console.log(posts)
 </script>
 
 <template>
-  <div>
-    <h3 v-if="user">Hi, {{ user.username }}</h3>
-    <h3 v-if="!user">You are not logged in!</h3>
-  </div>
   <div class="posts">
+    <h2>General</h2>
     <div v-for="item in posts"> 
       <article class="post-info">
-        <router-link to="/user/:user">
+        <router-link to="/user:/user">
           <img
             class="rounded-circle article-img"
             src="../assets/default.jpg"
@@ -44,29 +38,16 @@
 
 
 <script>
-import axios from 'axios';
 import { mapGetters } from 'vuex';
 
 export default {
-  name: "Home",
+  name: "GroupView",
   computed:{
     ...mapGetters(['user'])
   },
 };
 
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

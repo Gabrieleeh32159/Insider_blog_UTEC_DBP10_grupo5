@@ -71,7 +71,7 @@ class User(db.Model):
             'image_file': self.image_file,
             'password': self.password,
             'posts_ids': [post.id for post in self.posts],
-            'groups_ids': [group.id for group in self.groups]
+            'groups_ids': [group.group_name for group in self.groups]
         }
 
 class Post(db.Model):

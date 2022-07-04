@@ -4,8 +4,8 @@
         <h3>Login</h3>
         <div class="content-section">
             <div class="form-group">
-                <label>Email</label>
-                <input type="email" class="form-control form-control-lg" v-model="email" />
+                <label>Username</label>
+                <input type="username" class="form-control form-control-lg" v-model="username" />
             </div>
 
             <div class="form-group">
@@ -18,36 +18,32 @@
         </div>
     </div>
     </form>
-    <div class="alert alert-danger" role="alert" v-if="error">
-        ERRORRRRRRRRRRRRRRRRRRRR
-    </div>
     </header>
 </template>
 
 <script>
+import router from '@/router';
 import axios from 'axios'
     export default{
         name: 'Login',
         data(){
             return {
-                email: '',
+                username: '',
                 password: '',
             }
         },
         methods: {
             async handleSubmit(){
-                let user = {
-                    "email" : this.email,
-                    "password" : this.password
-                };
-                await axios.post('http://localhost:5000/users', user)
-                .then(data => {
-                    if(data.data.status == "ok"){
-                        console.log("Todo OK")
-                    } else {
-                     this.error = true;
-                    };
-                })
+                const response = await axios.post('http://localhost:5000/login', {
+                }, {
+                    auth: {
+                        username: this.username,
+                        password: this.password
+                }});
+                localStorage.setItem('token', response.data.token);
+                this.$store.dispatch('user', response.data.user);
+
+                this.$router.push('/');
             }
         }
     }

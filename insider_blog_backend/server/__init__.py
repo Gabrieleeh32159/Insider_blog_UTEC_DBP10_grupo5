@@ -1,4 +1,6 @@
+from argparse import _AttributeHolder
 from datetime import datetime, timedelta
+import json
 import uuid
 from flask import (
     Flask,
@@ -39,12 +41,13 @@ def pagination(request, selection, decreasing = False):
 def create_app(test_config=None):
     app = Flask(__name__)
     setup_db(app)
-    CORS(app,origin=['https://utec.edu.pe'], max_age=10)
+    CORS(app,origin=['http://localhost:3000'], max_age=10)
 
     @app.after_request
     def after_request(response):
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorizations, true')
-        response.headers.add('Access-Control-Allow-Methods', 'GET,PATCH,POST,OPTIONS')
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Headers', '*')
+        response.headers.add('Access-Control-Allow-Methods', '*')
         return response
 
     #*USERS
@@ -85,6 +88,28 @@ def create_app(test_config=None):
             'amount_users': len(selection)
         })
 
+    @app.route('/signup', methods=['GET','POST'])
+    def signup():
+        body = request.get_json()
+
+        username = body.get('username', None)
+        description = body.get('description', '')
+        email = body.get('email',None)
+        password = body.get('password',None)
+        image = body.get('image', default_image)
+
+        if username is None or email is None or password is None:
+            abort(422)
+
+        hashed_password = generate_password_hash(body['password'], method='sha256')
+
+        user = User(public_id=str(uuid.uuid4()), username=username, description = description, email=email, password=hashed_password, image_file = image)
+       
+        user.insert()
+        return jsonify({
+            'success': True
+        })
+
     @app.route('/users', methods=['POST'])
     def create_user():
         body = request.get_json()
@@ -120,6 +145,23 @@ def create_app(test_config=None):
             'total_users': len(selection)
         })
 
+    @app.route('/user', methods=['GET'])
+    def verify():
+        auth = request.headers['Authorization']
+        if auth is None:
+            return make_response('No auth', 403, {'WWW.Authentication': 'Token Required'})
+        
+        token = auth.replace('Bearer ', '')
+ 
+        print(token)
+
+        data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+        current_user = User.query.filter_by(public_id=data['public_id']).first()
+        if current_user is None:
+            return jsonify({'message': 'token is invalid'})
+
+        return current_user.format()
+
     @app.route('/login', methods=['GET', 'POST'])
     def login_user():
         auth = request.authorization
@@ -130,7 +172,10 @@ def create_app(test_config=None):
 
         if check_password_hash(user.password, auth.password):
             token = jwt.encode({'public_id': user.public_id, 'exp': datetime.utcnow() + timedelta(minutes=30)}, app.config['SECRET_KEY'])
-            return jsonify({'token' : token})
+            return jsonify({
+                'token' : token,
+                'user': user.format()
+            })
 
         return make_response('could not verify', 401, {'WWW.Authentication': 'Basic realm: "login required"'})
 

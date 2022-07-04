@@ -1,3 +1,4 @@
+import { rules } from "eslint-config-prettier";
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 
@@ -25,6 +26,33 @@ const routes = [
     component: () =>
       import("../views/RegisterView.vue"),
   },
+  {
+    path: "/newpost",
+    name: "newpost",
+    component: () =>
+      import("../views/NewPostView.vue")
+  },
+  {
+    path: "/group/:group",
+    name: "Groups",
+    props: true,
+    component: () =>
+      import("../views/GroupView.vue")
+  },
+  {
+    path: "/user/:user",
+    name: "Users",
+    props: true,
+    component: () =>
+    import("../views/UserView.vue")
+  },
+  {
+    path: "/post/:post",
+    name: "Post",
+    props: true,
+    component: () =>
+    import("../views/PostView.vue")
+  }
 ];
 
 const router = createRouter({

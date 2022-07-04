@@ -11,10 +11,14 @@
       <router-link to="/about">Sobre Nosotros</router-link>
     </div>
     <!-- Navbar Right Side -->
-    <div class="horizontal">
-      <router-link to="/">Nueva publicación</router-link>
+    <div class="horizontal" v-if="user">
+      <router-link to="/newpost">Nueva publicación</router-link>
       <router-link to="/">Unirse a un grupo</router-link>
       <router-link to="/">Crear un grupo</router-link>
+      <router-link to="/">{{ user.username }}</router-link>
+      <a href="javascript:void(0)" @click="handleClick" class="nav0link">Logout</a>
+    </div>
+    <div class="horizontal" v-if="!user">
       <router-link to="/login">Login</router-link>
       <router-link to="/register">Registrarse</router-link>
 
@@ -27,21 +31,31 @@
 </template>
 
 <script>
+  import {mapGetters} from 'vuex'
 export default {
-  name: "TheNavigation",
-  data() {
-    return {};
-  },
+    name: "TheNavigation",
+    
+    methods: {
+        handleClick(){
+            localStorage.removeItem('token');
+            this.$store.dispatch('user', null)
+            this.$router.push('/');
+        }
+    },
+    computed: {
+      ...mapGetters(['user'])
+    }
 };
+
 </script>
 
 <style scoped>
 #nav {
-  background-color: rgb(0, 187, 227);
-  display: flex;
-  padding-inline: 170px;
-  padding-block: 10px;
-  justify-content: space-between;
+    background-color: rgb(0, 187, 227);
+    display: flex;
+    padding-inline: 170px;
+    padding-block: 10px;
+    justify-content: space-between;
 }
 
 .horizontal {

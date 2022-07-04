@@ -11,12 +11,26 @@
 <script>
 import TheNavigation from "./components/TheNavigation.vue";
 import TheGroups from "./components/TheGroups.vue";
+import axios from 'axios'
+import store from "./vuex";
 
 export default {
+  name: 'App',
   components: {
     TheNavigation,
     TheGroups,
   },
+  async created(){
+    if(localStorage.getItem('token' !== null)){
+      const response = await axios.get('/user', {
+        headers:{ 
+          Authorization: 'Bearer ' + localStorage.getItem('token')
+        }
+      });
+      this.$store.dispatch('user', response.data);
+    };
+  },
+
 };
 </script>
 
