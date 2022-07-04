@@ -1,37 +1,10 @@
-<script setup>
-
-const posts = {
-  0: {
-    username: "Gabriel",
-    title: "Gab",
-    contenido: "brielbrielbriel ga b r i e l bag riel",
-  },
-  1: {
-    username: "Poalo",
-    title: "Pal",
-    conteindo: "olo pa oalo oalaopa oalopal aop",
-  },
-  2: {
-    username: "Marcelo",
-    title: "Mar",
-    contenido: "celo mar cleo ma rl e ocl ame clo rm",
-  },
-  3: {
-    username: "Martin",
-    title: "Mrt",
-    contenido: "ain mar aistn in antaitn4",
-  },
-};
-console.log(posts);
-</script>
-
 <template>
   <div>
     <h3 v-if="user">Hi, {{ user.username }}</h3>
     <h3 v-if="!user">You are not logged in!</h3>
   </div>
   <div class="posts">
-    <div v-for="item in data" v-bind:key="item.user_id">
+    <div v-for="item in posts" v-bind:key="item.user_id">
       <article class="post-info">
         <router-link to="/user/:user">
           <img
@@ -68,11 +41,10 @@ export default {
   name: "Home",
   computed: {
     ...mapGetters(["user"]),
+    ...mapGetters(["posts"]),
   }, 
   async created(){
-    const response = await axios.get('/posts');
-    const data = response.data.posts
-    console.log ('posts2: ', data);
+    console.log(this.posts)
   }
 };
 </script>
