@@ -19,12 +19,13 @@ default_image = 'default.jpg'
 
 items_per_page = 5
 
-def pagination(request, selection, decreasing = False):
+
+def pagination(request, selection, decreasing=False):
     page = request.args.get('page', None, type=int)
 
     if page is None and not decreasing:
         start = 0
-        end = 5 
+        end = 5
     elif page == 0:
         start = 0
         end = len(selection)
@@ -34,23 +35,26 @@ def pagination(request, selection, decreasing = False):
         items = [item.format() for item in selection]
         current = items[start:end]
         return current[::-1]
-    else: 
+    else:
         start = (page - 1)*items_per_page
         end = (start + items_per_page)
     items = [item.format() for item in selection]
     current = items[start:end]
     return current
 
+
 def create_app(test_config=None):
     app = Flask(__name__)
     setup_db(app)
-    CORS(app,origin=['http://127.0.0.1:3000/'], max_age=1000)
+    CORS(app, origin=['http://127.0.0.1:3000/'], max_age=1000)
 
     @app.after_request
     def after_request(response):
         #response.headers.add('Access-Control-Allow-Origin', '*')
-        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-        response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+        response.headers.add('Access-Control-Allow-Headers',
+                             'Content-Type,Authorization')
+        response.headers.add('Access-Control-Allow-Methods',
+                             'GET,PUT,POST,DELETE,OPTIONS')
         response.headers.add('Access-Control-Allow-Credentials', 'true')
         return response
 
@@ -62,13 +66,15 @@ def create_app(test_config=None):
             token = None
             if 'x-access-tokens' in request.headers:
                 token = request.headers['x-access-tokens']
-            
+
             if not token:
                 return jsonify({'message': 'a valid token is missing'})
 
             try:
-                data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
-                current_user = User.query.filter_by(public_id=data['public_id']).first()
+                data = jwt.decode(
+                    token, app.config['SECRET_KEY'], algorithms=['HS256'])
+                current_user = User.query.filter_by(
+                    public_id=data['public_id']).first()
                 if current_user is None:
                     return jsonify({'message': 'token is invalid'})
             except Exception as e:
@@ -85,30 +91,32 @@ def create_app(test_config=None):
 
         if len(users) == 0:
             abort(404)
-        
+
         return jsonify({
             'success': True,
             'users': users,
             'amount_users': len(selection)
         })
 
-    @app.route('/signup', methods=['GET','POST'])
+    @app.route('/signup', methods=['GET', 'POST'])
     def signup():
         body = request.get_json()
 
         username = body.get('username', None)
         description = body.get('description', '')
-        email = body.get('email',None)
-        password = body.get('password',None)
+        email = body.get('email', None)
+        password = body.get('password', None)
         image = body.get('image', default_image)
 
         if username is None or email is None or password is None:
             abort(422)
 
-        hashed_password = generate_password_hash(body['password'], method='sha256')
+        hashed_password = generate_password_hash(
+            body['password'], method='sha256')
 
-        user = User(public_id=str(uuid.uuid4()), username=username, description = description, email=email, password=hashed_password, image_file = image)
-       
+        user = User(public_id=str(uuid.uuid4()), username=username, description=description,
+                    email=email, password=hashed_password, image_file=image)
+
         user.insert()
         return jsonify({
             'success': True
@@ -120,31 +128,33 @@ def create_app(test_config=None):
 
         username = body.get('username', None)
         description = body.get('description', '')
-        email = body.get('email',None)
-        password = body.get('password',None)
+        email = body.get('email', None)
+        password = body.get('password', None)
         image = body.get('image', default_image)
 
         if username is None or email is None or password is None:
             abort(422)
 
-        hashed_password = generate_password_hash(body['password'], method='sha256')
+        hashed_password = generate_password_hash(
+            body['password'], method='sha256')
 
-        user = User(public_id=str(uuid.uuid4()), username=username, description = description, email=email, password=hashed_password, image_file = image)
+        user = User(public_id=str(uuid.uuid4()), username=username, description=description,
+                    email=email, password=hashed_password, image_file=image)
 
         print(user)
 
         user.insert()
 
         new_user_id = user.id
-        group_user = GroupUser(group_id = 0, user_id = new_user_id)
+        group_user = GroupUser(group_id=0, user_id=new_user_id)
         group_user.insert()
 
         selection = User.query.order_by('id').all()
         current_users = pagination(request, selection, True)
 
         return jsonify({
-            'success':True,
-            'created':new_user_id,
+            'success': True,
+            'created': new_user_id,
             'users': current_users,
             'total_users': len(selection)
         })
@@ -154,13 +164,15 @@ def create_app(test_config=None):
         auth = request.headers['Authorization']
         if auth is None:
             return make_response('No auth', 403, {'WWW.Authentication': 'Token Required'})
-        
+
         token = auth.replace('Bearer ', '')
- 
+
         print(token)
 
-        data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
-        current_user = User.query.filter_by(public_id=data['public_id']).first()
+        data = jwt.decode(
+            token, app.config['SECRET_KEY'], algorithms=['HS256'])
+        current_user = User.query.filter_by(
+            public_id=data['public_id']).first()
         if current_user is None:
             return jsonify({'message': 'token is invalid'})
 
@@ -175,9 +187,10 @@ def create_app(test_config=None):
         user = User.query.filter_by(username=auth.username).first()
 
         if check_password_hash(user.password, auth.password):
-            token = jwt.encode({'public_id': user.public_id, 'exp': datetime.utcnow() + timedelta(minutes=30)}, app.config['SECRET_KEY'])
+            token = jwt.encode({'public_id': user.public_id, 'exp': datetime.utcnow(
+            ) + timedelta(minutes=30)}, app.config['SECRET_KEY'])
             return jsonify({
-                'token' : token,
+                'token': token,
                 'user': user.format()
             })
 
@@ -187,7 +200,7 @@ def create_app(test_config=None):
     def update_user(user_id):
         error_404 = False
         try:
-            user = User.query.filter(User.id==user_id).one_or_none()
+            user = User.query.filter(User.id == user_id).one_or_none()
 
             if user is None:
                 error_404 = True
@@ -224,7 +237,7 @@ def create_app(test_config=None):
         error_404 = False
         try:
             user = User.query.filter(User.id == user_id).one_or_none()
-            
+
             if user is None:
                 error_404 = True
                 abort(404)
@@ -235,10 +248,10 @@ def create_app(test_config=None):
             users = pagination(request, selection)
 
             return jsonify({
-                "success":True,
-                "deleted":user_id,
-                "users":users,
-                "total_users":len(selection)
+                "success": True,
+                "deleted": user_id,
+                "users": users,
+                "total_users": len(selection)
             })
 
         except Exception as e:
@@ -269,8 +282,8 @@ def create_app(test_config=None):
             current_groups = pagination(request, selection)
 
             return jsonify({
-                'success':True,
-                'created':group_id,
+                'success': True,
+                'created': group_id,
                 'groups': current_groups,
                 'total_groups': len(selection)
             })
@@ -278,12 +291,12 @@ def create_app(test_config=None):
             print(e)
             abort(500)
 
-
     @app.route('/groups', methods=['GET'])
     def get_groups():
         error_404 = False
         try:
-            groups = [group.format() for group in Group.query.order_by("id").all()]
+            groups = [group.format()
+                      for group in Group.query.order_by("id").all()]
 
             if len(groups) == 0:
                 error_404 = True
@@ -299,7 +312,7 @@ def create_app(test_config=None):
             print(e)
             if error_404:
                 abort(404)
-    
+
     @app.route('/groups/<int:group_id>', methods=['DELETE'])
     def delete_group(group_id):
         error_404 = False
@@ -316,10 +329,10 @@ def create_app(test_config=None):
             groups = pagination(request, selection)
 
             return jsonify({
-                "success":True,
-                "deleted":group_id,
-                "groups":groups,
-                "total_groups":len(selection)
+                "success": True,
+                "deleted": group_id,
+                "groups": groups,
+                "total_groups": len(selection)
             })
 
         except Exception as e:
@@ -333,7 +346,7 @@ def create_app(test_config=None):
     def update_group(group_id):
         error_404 = False
         try:
-            group = Group.query.filter(Group.id==group_id).one_or_none()
+            group = Group.query.filter(Group.id == group_id).one_or_none()
 
             if group is None:
                 error_404 = True
@@ -367,9 +380,9 @@ def create_app(test_config=None):
             user_id = body.get('user_id')
             group_id = body.get('group_id')
 
-            user = User.query.filter(User.id==user_id).one_or_none()
-            group = Group.query.filter(Group.id==group_id).one_or_none()
-            
+            user = User.query.filter(User.id == user_id).one_or_none()
+            group = Group.query.filter(Group.id == group_id).one_or_none()
+
             if user is None or group is None:
                 error_404 = True
                 print('404')
@@ -384,12 +397,15 @@ def create_app(test_config=None):
                 error_404 = True
                 abort(404)
 
-            post = Post(title=title, content=content, user_id=user_id, group_id=group_id)
+            post = Post(title=title, content=content,
+                        user_id=user_id, group_id=group_id)
 
             post_id = post.insert()
 
-            selection = Post.query.filter(Post.group_id == group_id and Post.user_id == user_id).order_by('id').all()
-            current_posts = pagination(request=request, selection=selection, decreasing=True)
+            selection = Post.query.filter(
+                Post.group_id == group_id and Post.user_id == user_id).order_by('id').all()
+            current_posts = pagination(
+                request=request, selection=selection, decreasing=True)
             return jsonify({
                 'success': True,
                 'id': post_id,
@@ -408,38 +424,42 @@ def create_app(test_config=None):
         error_404 = False
         try:
             user_id = request.args.get('user_id', None, type=int)
-            user = User.query.filter(User.id==user_id).one_or_none()
+            user = User.query.filter(User.id == user_id).one_or_none()
 
             group_id = request.args.get('group_id', None, type=int)
-            group = Group.query.filter(Group.id==group_id).one_or_none()
+            group = Group.query.filter(Group.id == group_id).one_or_none()
 
-            if (user_id is not None and user is None) or (group_id is not None and group is None): 
+            if (user_id is not None and user is None) or (group_id is not None and group is None):
                 error_404 = True
                 abort(404)
-            
+
             #* Obtener posts en un grupo
             if user_id is None and group_id is not None:
-                selection = Post.query.filter(Post.group_id==group_id).order_by('id').all()
+                selection = Post.query.filter(
+                    Post.group_id == group_id).order_by('id').all()
             #* Obtener posts de una persona
             elif group_id is None and user_id is not None:
-                selection = Post.query.filter(Post.user_id==user_id).order_by('id').all()
+                selection = Post.query.filter(
+                    Post.user_id == user_id).order_by('id').all()
             #* Obtener posts de un usuario en un grupo
             elif group_id is not None and user_id is not None:
-                selection = Post.query.filter(Post.user_id==user_id and Post.group_id==group_id).order_by('id').all()
+                selection = Post.query.filter(
+                    Post.user_id == user_id and Post.group_id == group_id).order_by('id').all()
             #* Obtener todos los posts
             elif group_id is None and user_id is None:
                 selection = Post.query.order_by('id').all()
-            
+
             if len(selection) == 0:
                 error_404 = True
                 abort(404)
 
-            posts = pagination(request=request, selection=selection, decreasing=True)
+            posts = pagination(
+                request=request, selection=selection, decreasing=True)
 
             return jsonify({
-            'success': True,
-            'posts': posts,
-            'amount_posts': len(selection)
+                'success': True,
+                'posts': posts,
+                'amount_posts': len(selection)
             })
         except Exception as e:
             print(e)
@@ -452,7 +472,7 @@ def create_app(test_config=None):
     def update_post(post_id):
         error_404 = False
         try:
-            post = Post.query.filter(Post.id==post_id).one_or_none()
+            post = Post.query.filter(Post.id == post_id).one_or_none()
 
             if post is None:
                 error_404 = True
@@ -476,12 +496,12 @@ def create_app(test_config=None):
                 abort(404)
             else:
                 abort(500)
-    
+
     @app.route('/posts/<int:post_id>', methods=['DELETE'])
     def delete_post(post_id):
         error_404 = False
         try:
-            post = Post.query.filter(Post.id==post_id).one_or_none()
+            post = Post.query.filter(Post.id == post_id).one_or_none()
 
             if post is None:
                 error_404 = True
@@ -490,7 +510,8 @@ def create_app(test_config=None):
             post.delete()
 
             selection = Post.query.order_by('id').all()
-            current_posts = pagination(request=request, selection=selection, decreasing=True)
+            current_posts = pagination(
+                request=request, selection=selection, decreasing=True)
 
             return jsonify({
                 'success': True,
@@ -505,7 +526,7 @@ def create_app(test_config=None):
                 abort(404)
             else:
                 abort(500)
-    
+
     #TODO
     #* UNIR USUARIOS A GRUPOS
     @app.route('/user/<int:user_id>/group/<int:group_id>', methods=['POST'])
@@ -519,7 +540,7 @@ def create_app(test_config=None):
                 error_404 = True
                 abort(404)
 
-            groupuser = GroupUser(user_id = user_id, group_id = group_id)
+            groupuser = GroupUser(user_id=user_id, group_id=group_id)
             groupuser.insert()
 
             return jsonify({
@@ -545,7 +566,8 @@ def create_app(test_config=None):
                 error_404 = True
                 abort(404)
 
-            groupuser = GroupUser.query.filter(GroupUser.user_id == user_id and GroupUser.group_id == group_id).one_or_none()
+            groupuser = GroupUser.query.filter(
+                GroupUser.user_id == user_id and GroupUser.group_id == group_id).one_or_none()
             groupuser.delete()
 
             return jsonify({
@@ -575,7 +597,6 @@ def create_app(test_config=None):
             'code': 500,
             'message': 'Internal Server error'
         }), 500
-
 
     @app.route('/')
     def index():
