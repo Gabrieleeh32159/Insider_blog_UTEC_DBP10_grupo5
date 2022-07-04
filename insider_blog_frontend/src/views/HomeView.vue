@@ -1,4 +1,5 @@
 <script setup>
+
 const posts = {
   0: {
     username: "Gabriel",
@@ -30,7 +31,7 @@ console.log(posts);
     <h3 v-if="!user">You are not logged in!</h3>
   </div>
   <div class="posts">
-    <div v-for="item in posts" v-bind:key="item.username">
+    <div v-for="item in data" v-bind:key="item.user_id">
       <article class="post-info">
         <router-link to="/user/:user">
           <img
@@ -42,7 +43,7 @@ console.log(posts);
 
         <div class="media-body">
           <div class="article-metadata">
-            <router-link to="/user/:user">{{ item.username }}</router-link>
+            <router-link to="/user/:user">{{ item.user_id }}</router-link>
             <small class="text-muted"> 2022-06-28 </small>
           </div>
           <h2>
@@ -50,7 +51,7 @@ console.log(posts);
               {{ item.title }};
             </router-link>
           </h2>
-          <p class="article-content">{{ item.contenido }}</p>
+          <p class="article-content">{{ item.content }}</p>
         </div>
       </article>
     </div>
@@ -58,13 +59,21 @@ console.log(posts);
 </template>
 
 <script>
+import axios from "axios";
 import { mapGetters } from "vuex";
+
+
 
 export default {
   name: "Home",
   computed: {
     ...mapGetters(["user"]),
-  },
+  }, 
+  async created(){
+    const response = await axios.get('/posts');
+    const data = response.data.posts
+    console.log ('posts2: ', data);
+  }
 };
 </script>
 

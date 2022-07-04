@@ -19,6 +19,9 @@ const store = new Vuex.Store({
     user(context, user) {
       context.commit("user", user);
     },
+    posts(context, posts) {
+        context.commit("posts", posts)
+    }
   },
   mutations: {
     user(state, user) {
