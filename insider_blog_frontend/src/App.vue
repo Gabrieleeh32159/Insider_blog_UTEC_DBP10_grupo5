@@ -20,7 +20,7 @@ export default {
   async created() {
     const post_response = await axios.get("/posts");
     const posts = post_response.data.posts;
-    this.$store.dispatch("posts", posts)
+    this.$store.dispatch("posts", posts);
 
     const group_response = await axios.get("/groups");
     const groups = group_response.data.grupos;
