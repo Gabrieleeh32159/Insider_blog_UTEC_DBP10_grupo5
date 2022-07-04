@@ -1,4 +1,3 @@
-
 <template>
   <div class="posts">
     <h2>General</h2>
@@ -36,12 +35,28 @@ import { mapGetters } from "vuex";
 
 export default {
   name: "GroupView",
+  props: {
+    slug: {
+      type: String,
+      required: true,
+    },
+  },
   computed: {
     ...mapGetters(["user"]),
     ...mapGetters(["posts"]),
+    ...mapGetters(["groups"]),
+    name_id(){
+      console.log(this.posts)
+      return this.posts.find((p) => p.group_id === this.slug)
+    }
   },
   created(){
-    console.log(this.posts[0]);
+    for(var i = 0; i < this.groups.length; i++) {
+      if(this.groups[i].group_name === this.slug){
+        const id = this.groups[i].id;
+      } 
+    }
+    console.log(this.slug)
   },
 };
 </script>

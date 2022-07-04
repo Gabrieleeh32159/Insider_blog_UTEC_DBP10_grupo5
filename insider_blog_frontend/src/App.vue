@@ -23,7 +23,7 @@ export default {
     this.$store.dispatch("posts", posts);
 
     const groups_response = await axios.get("/groups");
-    const groups = groups_response.data.groups;
+    const groups = groups_response.data.grupos;
     this.$store.dispatch("groups",groups);
 
     if (localStorage.getItem("token" !== null)) {

@@ -15,8 +15,21 @@ import { mapGetters } from "vuex";
 
 export default {
   name: "TheGroups",
+  data() {
+    return {};
+  },
+  props: {
+    slug: {
+      type: String,
+      required: true,
+    }
+  },
   computed: {
     ...mapGetters(["user"]),
+    ...mapGetters(["groups"]),
+    groupget(){
+      return this.groups.find((g) => g.group_id === this.slug);
+    },
   },
 };
 </script>

@@ -36,9 +36,10 @@ export default {
   computed: {
     ...mapGetters(["user"]),
     ...mapGetters(["posts"]),
+    ...mapGetters(["groups"]),
   },
   async created() {
-    console.log(this.posts);
+    console.log(this.groups);
   },
 };
 </script>
