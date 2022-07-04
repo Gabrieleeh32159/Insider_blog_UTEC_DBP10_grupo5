@@ -1,8 +1,8 @@
 <template>
   <div class="posts">
-    <h2>{{this.slug}}</h2>
+    <h2>{{group.group_name}}</h2>
     <div v-for="item in posts" v-bind:key="item.user_id">
-      <div v-if="item.group_id === 0">
+      <div v-if="item.group_id == this.group.id">
       <article class="post-info">
         <router-link :to="{ name: 'Users', params: { slug: item.user_id } }">
           <img
@@ -49,9 +49,10 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(["user"]),
-    ...mapGetters(["groups"]),
-    ...mapGetters(["posts"]),
+    group(){
+      return store.state.groups.find((g) => g.group_name == this.slug)
+    },
+    ...mapGetters(['posts']),
   },
 };
 </script>

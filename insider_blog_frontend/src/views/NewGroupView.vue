@@ -5,7 +5,7 @@
       <div class="content-section">
         <div class="form-group">
           <label>Name</label>
-          <input class="form-control form-control-lg" v-model="group_name" />
+          <input class="form-control form-control-lg" v-model="groupname" />
         </div>
 
         <div class="form-group">
