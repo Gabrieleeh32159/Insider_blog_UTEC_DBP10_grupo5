@@ -1,7 +1,9 @@
+<<<<<<< HEAD
 from argparse import _AttributeHolder
 from datetime import datetime, timedelta
 import json
 import uuid
+import psycopg2
 from flask import (
     Flask,
     abort,
@@ -12,7 +14,6 @@ from flask import (
 import jwt
 from functools import wraps
 from flask_cors import CORS
-from sqlalchemy import false, true
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import setup_db, User, Post, GroupUser, Group
 
@@ -81,14 +82,16 @@ def create_app(test_config=None):
 
     @app.route('/users', methods=['GET'])
     def get_users():
-        users = [user.format() for user in User.query.order_by('id').all()]
+        selection = User.query.order_by('id').all()
+        users = pagination(request, selection)
+
         if len(users) == 0:
             abort(404)
         
         return jsonify({
             'success': True,
             'users': users,
-            'amount_users': len(users)
+            'amount_users': len(selection)
         })
 
     @app.route('/signup', methods=['GET','POST'])
@@ -198,8 +201,7 @@ def create_app(test_config=None):
             if 'email' in body:
                 user.email = body.get('email')
             if 'password' in body:
-                hashed_password = generate_password_hash(body.get('password'), method='sha256')
-                user.password = hashed_password
+                user.password = body.get('password')
             if 'description' in body:
                 user.description = body.get('description')
             if 'image' in body:
@@ -209,8 +211,7 @@ def create_app(test_config=None):
 
             return jsonify({
                 'success': True,
-                'id': user_id,
-                'body': body
+                'id': user_id
             })
 
         except Exception as e:
@@ -576,6 +577,15 @@ def create_app(test_config=None):
             'code': 500,
             'message': 'Internal Server error'
         }), 500
+        
+
+    @app.errorhandler(422)
+    def unprocessable(error):
+        return jsonify({
+            'success': False,
+            'code': 422,
+            'message': 'Unprocessable'
+        }), 422
 
 
     @app.route('/')
