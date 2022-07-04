@@ -28,6 +28,10 @@ export default {
     const groups = await groups_response.data.grupos;
     this.$store.dispatch("groups", groups);
 
+    const users_response = await axios.get('/users');
+    const users = await users_response.data.users
+    this.$store.dispatch("users", users);
+
     if (localStorage.getItem("token" !== null)) {
       const response = await axios.get("http://localhost:5000/user", {
         headers: {
@@ -47,6 +51,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: left;
 }
+
 .algo {
   display: flex;
   justify-content: space-between;
