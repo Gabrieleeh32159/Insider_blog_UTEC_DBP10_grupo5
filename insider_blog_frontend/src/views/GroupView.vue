@@ -1,44 +1,32 @@
-<script setup>
-const posts = {
-  0: {
-    username: "Gabriel",
-    title: "Gab",
-    contenido: "brielbrielbriel ga b r i e l bag riel",
-  },
-  1: {
-    username: "Poalo",
-    title: "Pal",
-    conteindo: "olo pa oalo oalaopa oalopal aop",
-  },
-};
-</script>
 
 <template>
   <div class="posts">
     <h2>General</h2>
-    <div v-for="item in posts" v-bind:key="item.username">
-      <article class="post-info">
-        <router-link to="/user:/user">
-          <img
-            class="rounded-circle article-img"
-            src="../assets/default.jpg"
-            style="height: 65px; border-radius: 65px"
-          />
-        </router-link>
+    <div v-for="item in posts" v-bind:key="item.user_id">
+      <div v-if="item.group_id === 0">
+        <article class="post-info">
+          <router-link to="/user:/user">
+            <img
+              class="rounded-circle article-img"
+              src="../assets/default.jpg"
+              style="height: 65px; border-radius: 65px"
+            />
+          </router-link>
 
-        <div class="media-body">
-          <div class="article-metadata">
-            <router-link to="/user/:user">{{ item.username }}</router-link>
-            <small class="text-muted"> 2022-06-28 </small>
+          <div class="media-body">
+            <div class="article-metadata">
+              <router-link to="/user/:user">{{ item.user_id }}</router-link>
+              <small class="text-muted"> 2022-06-28 </small>
+            </div>
+            <h2>
+              <router-link to="/post/:post" class="article-title">
+                {{ item.title }};
+              </router-link>
+            </h2>
+            <p class="article-content">{{ item.content }}</p>
           </div>
-          <h2>
-            <router-link to="/post/:post" class="article-title">
-              {{ item.title }};
-            </router-link>
-          </h2>
-          <p class="article-content">{{ item.contenido }}</p>
-        </div>
-      </article>
+        </article>
+      </div>
     </div>
   </div>
 </template>
@@ -50,6 +38,10 @@ export default {
   name: "GroupView",
   computed: {
     ...mapGetters(["user"]),
+    ...mapGetters(["posts"]),
+  },
+  created(){
+    console.log(this.posts[0]);
   },
 };
 </script>

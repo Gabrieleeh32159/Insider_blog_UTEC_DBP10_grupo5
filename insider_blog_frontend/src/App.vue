@@ -22,9 +22,9 @@ export default {
     const posts = post_response.data.posts;
     this.$store.dispatch("posts", posts);
 
-    const group_response = await axios.get("/groups");
-    const groups = group_response.data.grupos;
-    this.$store.dispatch("groups", groups)
+    const groups_response = await axios.get("/groups");
+    const groups = groups_response.data.groups;
+    this.$store.dispatch("groups",groups);
 
     if (localStorage.getItem("token" !== null)) {
       const response = await axios.get("/user", {
