@@ -24,8 +24,8 @@
           <label>Group</label>
           <select class="form-control form-control-lg" v-model="group">
             <option
-              v-for="group_name in user.groups_ids"
-              value="{{group(group_name)}}"
+              :v-for="group_name in user.groups_ids"
+              value="{{groups(group_name)}}"
             >
               {{ group_name }}
             </option>
@@ -44,7 +44,7 @@
 import router from "@/router";
 import store from "@/vuex";
 import axios from "axios";
-import { mapGetters } from "vuex";
+//import { mapGetters } from "vuex";
 export default {
   name: "NewPost",
   data() {
@@ -58,7 +58,7 @@ export default {
     user() {
       return store.state.user;
     },
-    group(search) {
+    groups(search) {
       return store.state.groups.find((g) => g.group_name === search);
     },
   },

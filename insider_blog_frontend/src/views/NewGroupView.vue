@@ -17,8 +17,10 @@
 </template>
 
 <script>
+//import router from "@/router";
 import axios from "axios";
 import { mapGetters } from "vuex";
+import TheGroups from "@/components/TheGroups.vue";
 export default {
   name: "NewGroup",
   data() {
@@ -33,10 +35,13 @@ export default {
   },
   methods: {
     async handleSubmit() {
-      const response = await axios.post("/groups", {
-        headers: {},
+      console.log(this.group_name, this.user.id);
+      let response = await axios.post("http://127.0.0.1:5000/groups", {
+        groupname: this.group_name,
+        user_id: this.user.id,
       });
-      console.log(response.headers);
+      TheGroups.groups = response.data.groups;
+      this.$router.push("/");
     },
   },
 };

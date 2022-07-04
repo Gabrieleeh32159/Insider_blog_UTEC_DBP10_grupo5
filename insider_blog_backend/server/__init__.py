@@ -48,7 +48,7 @@ def create_app(test_config=None):
 
     @app.after_request
     def after_request(response):
-        #response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Origin', '*')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
         response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
         response.headers.add('Access-Control-Allow-Credentials', 'true')
@@ -251,19 +251,23 @@ def create_app(test_config=None):
     #* GROUPS
 
     @app.route('/groups', methods=['POST'])
-    @token_required
-    def create_group(current_user):
+    #@token_required
+    def create_group():
         try:
             body = request.get_json()
 
             groupname = body.get('groupname', None)
+            user_id = body.get('user_id', None)
 
-            if groupname is None:
+            if groupname is None or user_id is None:
                 abort(422)
 
             group = Group(group_name=groupname)
 
             group_id = group.insert()
+
+            join_user = GroupUser(group_id=group_id, user_id=user_id)
+            join_user.insert()
 
             selection = Group.query.order_by('id').all()
             current_groups = pagination(request, selection)

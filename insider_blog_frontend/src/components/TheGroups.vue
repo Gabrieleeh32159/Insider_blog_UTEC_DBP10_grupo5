@@ -15,7 +15,10 @@
 </template>
 
 <script>
+//import { report } from "process";
+import axios from "axios";
 import { mapGetters } from "vuex";
+//import axios from "axios";
 
 export default {
   name: "TheGroups",
@@ -34,6 +37,12 @@ export default {
     groupget() {
       return this.groups.find((g) => g.group_id === this.slug);
     },
+  },
+  async created() {
+    console.log(this.posts);
+    const groups_response = await axios.get("http://localhost:5000/groups");
+    const groups = await groups_response.data.posts;
+    this.$store.dispatch("groups", groups);
   },
 };
 </script>

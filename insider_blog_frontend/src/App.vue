@@ -2,22 +2,19 @@
   <TheNavigation />
   <div class="algo">
     <router-view v-bind:key="$route.path" />
-    <div>
-      <TheGroups />
-    </div>
   </div>
 </template>
 
 <script>
 import TheNavigation from "./components/TheNavigation.vue";
-import TheGroups from "./components/TheGroups.vue";
+//import TheGroups from "./components/TheGroups.vue";
 import axios from "axios";
 
 export default {
   name: "App",
   components: {
     TheNavigation,
-    TheGroups,
+    //TheGroups,
   },
   async created() {
     const post_response = await axios.get("http://localhost:5000/posts");

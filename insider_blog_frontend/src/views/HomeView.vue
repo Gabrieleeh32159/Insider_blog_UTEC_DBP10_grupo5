@@ -31,26 +31,33 @@
       </article>
     </div>
   </div>
+  <div>
+    <TheGroups />
+  </div>
 </template>
 
 <script>
-import axios from "axios";
+//import axios from "axios";
+import TheGroups from "../components/TheGroups.vue";
 import { mapGetters } from "vuex";
 
 export default {
+  components: {
+    TheGroups,
+  },
   name: "Home",
   computed: {
     ...mapGetters(["user"]),
     ...mapGetters(["posts"]),
     ...mapGetters(["groups"]),
   },
-  async created() {
-    console.log(this.posts);
-    const post_response = await axios.get("http://localhost:5000/posts");
-    const posts = await post_response.data.posts;
-    this.$store.dispatch("posts", posts);
-  },
-  async userdata(id) {},
+  // async created() {
+  //   console.log(this.posts);
+  //   const post_response = await axios.get("http://localhost:5000/posts");
+  //   const posts = await post_response.data.posts;
+  //   this.$store.dispatch("posts", posts);
+  // },
+  /*async userdata(id) {},*/
 };
 </script>
 
