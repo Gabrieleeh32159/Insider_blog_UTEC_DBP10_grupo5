@@ -18,6 +18,11 @@ export default {
     TheGroups,
   },
   async created() {
+    const post_response = await axios.get("/posts");
+    const posts = post_response.data.posts;
+    this.$store.dispatch("posts", posts)
+
+
     if (localStorage.getItem("token" !== null)) {
       const response = await axios.get("/user", {
         headers: {
