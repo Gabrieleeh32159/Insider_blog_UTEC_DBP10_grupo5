@@ -34,8 +34,7 @@ export default {
   methods: {
     async handleSubmit() {
       const response = await axios.post("/groups", {
-        headers : {
-        }
+        headers: {},
       });
       console.log(response.headers);
     },

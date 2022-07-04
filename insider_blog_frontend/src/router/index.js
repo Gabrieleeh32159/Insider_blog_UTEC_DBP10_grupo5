@@ -60,7 +60,7 @@ const routes = [
     path: "/edit/:slug",
     name: "edit",
     component: () => import("../views/EditView.vue"),
-  }
+  },
 ];
 
 const router = createRouter({

@@ -21,7 +21,7 @@ const store = new Vuex.Store({
     },
     users: (state) => {
       return state.users;
-    }
+    },
   },
   actions: {
     user(context, user) {
@@ -34,8 +34,8 @@ const store = new Vuex.Store({
       context.commit("groups", groups);
     },
     users(context, users) {
-      context.commit("users", users)
-    }
+      context.commit("users", users);
+    },
   },
   mutations: {
     user(state, user) {
@@ -49,7 +49,7 @@ const store = new Vuex.Store({
     },
     users(state, users) {
       state.users = users;
-    }
+    },
   },
 });
 

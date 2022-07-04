@@ -36,11 +36,11 @@
 
 <script>
 import { mapGetters } from "vuex";
-import store from "@/vuex"
+import store from "@/vuex";
 export default {
   name: "TheNavigation",
   data() {
-    return{
+    return {
       users: store.users,
     };
   },

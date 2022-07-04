@@ -1,7 +1,7 @@
 <template>
   <header class="site-header">
     <form @submit.prevent="handleSubmit">
-      <h3>Edit {{this.slug}} Profile'</h3>
+      <h3>Edit {{ this.slug }} Profile'</h3>
       <div class="form-group">
         <label>Username</label>
         <input
@@ -19,7 +19,12 @@
 
       <div class="form-group">
         <label>Description</label>
-        <input type="text" name="description" v-model="description" class="form-control" />
+        <input
+          type="text"
+          name="description"
+          v-model="description"
+          class="form-control"
+        />
       </div>
 
       <div class="form-group">
@@ -79,7 +84,7 @@ export default {
       } catch (error) {
         this.showError = true;
       }
-      await router.push("/user/"+this.slug);
+      await router.push("/user/" + this.slug);
     },
   },
 };

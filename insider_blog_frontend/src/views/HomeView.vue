@@ -50,9 +50,7 @@ export default {
     const posts = await post_response.data.posts;
     this.$store.dispatch("posts", posts);
   },
-  async userdata(id) {
-    
-  },
+  async userdata(id) {},
 };
 </script>
 

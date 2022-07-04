@@ -23,9 +23,12 @@
         <div class="form-group">
           <label>Group</label>
           <select class="form-control form-control-lg" v-model="group">
-              <option v-for="group_name in user.groups_ids " 
-                value={{group(group_name)}}
-                >{{group_name}}</option>
+            <option
+              v-for="group_name in user.groups_ids"
+              value="{{group(group_name)}}"
+            >
+              {{ group_name }}
+            </option>
           </select>
         </div>
 
@@ -52,12 +55,12 @@ export default {
     };
   },
   computed: {
-    user(){
-      return store.state.user
+    user() {
+      return store.state.user;
     },
     group(search) {
-      return store.state.groups.find((g) => g.group_name === search)
-    }
+      return store.state.groups.find((g) => g.group_name === search);
+    },
   },
   methods: {
     async handleSubmit() {
