@@ -58,6 +58,11 @@ export default {
     user() {
       return store.state.user;
     },
+
+    group(search) {
+      return store.state.groups.find((g) => g.group_name === search)
+    }
+
   },
   methods: {
     async handleSubmit() {

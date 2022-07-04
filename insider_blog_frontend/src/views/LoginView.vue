@@ -1,5 +1,5 @@
 <template>
-  <header class="site-header">
+  <header class="site-header horizontal">
     <form @submit.prevent="handleSubmit">
       <h3>Login</h3>
       <div class="content-section">
@@ -26,13 +26,20 @@
         </div>
       </div>
     </form>
+    <div>
+      <TheGroups />
+    </div>
   </header>
 </template>
 
 <script>
+import TheGroups from "../components/TheGroups.vue";
 import axios from "axios";
 export default {
   name: "Login",
+  components: {
+    TheGroups,
+  },
   data() {
     return {
       username: "",
