@@ -4,7 +4,7 @@
     <p>Estos son los grupos a los que perteneces actualmente.</p>
     <div v-if="user">
       <li v-for="group in user.groups_ids" v-bind:key="group">
-        <router-link to="/group/:group">{{ group }}</router-link>
+        <router-link :to="{name: 'Groups', params: {slug: group}}">{{ group }}</router-link>
       </li>
     </div>
   </div>

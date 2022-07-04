@@ -1,12 +1,8 @@
 <template>
-  <div>
-    <h3 v-if="user">Hi, {{ user.username }}</h3>
-    <h3 v-if="!user">You are not logged in!</h3>
-  </div>
   <div class="posts">
     <div v-for="item in posts" v-bind:key="item.user_id">
       <article class="post-info">
-        <router-link to="/user/:user">
+        <router-link :to="{name: 'Users', params: {slug: item.user_id}}">
           <img
             class="rounded-circle article-img"
             src="../assets/default.jpg"
@@ -16,11 +12,11 @@
 
         <div class="media-body">
           <div class="article-metadata">
-            <router-link to="/user/:user">{{ item.user_id }}</router-link>
+            <router-link :to="{name: 'Users', params: {slug: item.user_id}}">{{ item.user_id }}</router-link>
             <small class="text-muted"> 2022-06-28 </small>
           </div>
           <h2>
-            <router-link to="/post/:post" class="article-title">
+            <router-link :to="{name: 'Posts', params: {slug: item.id}}" class="article-title">
               {{ item.title }};
             </router-link>
           </h2>

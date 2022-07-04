@@ -3,6 +3,7 @@ import Vuex from "vuex";
 const state = {
   user: null,
   posts: null,
+  groups: null,
 };
 
 const store = new Vuex.Store({
@@ -14,6 +15,9 @@ const store = new Vuex.Store({
     posts: (state) => {
       return state.posts;
     },
+    groups: (state) => {
+        return state.groups;
+      },
   },
   actions: {
     user(context, user) {
@@ -21,7 +25,10 @@ const store = new Vuex.Store({
     },
     posts(context, posts) {
         context.commit("posts", posts);
-    }
+    },
+    groups(context, groups) {
+        context.commit("groups", groups);
+    },
   },
   mutations: {
     user(state, user) {
@@ -30,6 +37,9 @@ const store = new Vuex.Store({
     posts(state, posts) {
       state.posts = posts;
     },
+    groups(state, groups) {
+        state.groups = groups;
+      },
   },
 });
 
