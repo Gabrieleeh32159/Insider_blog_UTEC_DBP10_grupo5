@@ -2,7 +2,9 @@
   <TheNavigation />
   <div class="algo">
     <router-view v-bind:key="$route.path" />
-    <TheGroups />
+    <div>
+      <TheGroups />
+    </div>
   </div>
 </template>
 
@@ -18,16 +20,16 @@ export default {
     TheGroups,
   },
   async created() {
-    const post_response = await axios.get("/posts");
-    const posts = post_response.data.posts;
+    const post_response = await axios.get("http://localhost:5000/posts");
+    const posts = await post_response.data.posts;
     this.$store.dispatch("posts", posts);
 
-    const groups_response = await axios.get("/groups");
-    const groups = groups_response.data.grupos;
-    this.$store.dispatch("groups",groups);
+    const groups_response = await axios.get("http://localhost:5000/groups");
+    const groups = await groups_response.data.grupos;
+    this.$store.dispatch("groups", groups);
 
     if (localStorage.getItem("token" !== null)) {
-      const response = await axios.get("/user", {
+      const response = await axios.get("http://localhost:5000/user", {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },

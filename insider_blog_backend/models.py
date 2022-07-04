@@ -114,10 +114,12 @@ class Post(db.Model):
         return f"Post('{self.title}', '{self.date_posted}')"
 
     def format(self):
+        user = User.query.filter(User.id == self.user_id).one_or_none()
         return{
             'id': self.id,
             'title': self.title,
             'content': self.content,
+            'author_name': user.username,
             'user_id': self.user_id,
             'group_id':self.group_id
         }

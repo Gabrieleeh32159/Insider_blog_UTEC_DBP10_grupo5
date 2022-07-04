@@ -45,18 +45,18 @@ export default {
     ...mapGetters(["user"]),
     ...mapGetters(["posts"]),
     ...mapGetters(["groups"]),
-    name_id(){
-      console.log(this.posts)
-      return this.posts.find((p) => p.group_id === this.slug)
-    }
+    name_id() {
+      console.log(this.posts);
+      return this.posts.find((p) => p.group_id === this.slug);
+    },
   },
-  created(){
-    for(var i = 0; i < this.groups.length; i++) {
-      if(this.groups[i].group_name === this.slug){
-        const id = this.groups[i].id;
-      } 
+  created() {
+    for (var i = 0; i < this.groups.length; i++) {
+      if (this.groups[i].group_name === this.slug) {
+        //const id = this.groups[i].id;
+      }
     }
-    console.log(this.slug)
+    console.log(this.slug);
   },
 };
 </script>

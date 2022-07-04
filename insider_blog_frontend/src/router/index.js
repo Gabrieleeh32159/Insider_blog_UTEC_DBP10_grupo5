@@ -46,6 +46,16 @@ const routes = [
     props: true,
     component: () => import("../views/PostView.vue"),
   },
+  {
+    path: "/newgroup",
+    name: "newgroup",
+    component: () => import("../views/NewGroupView.vue"),
+  },
+  {
+    path: "/joingroup",
+    name: "joingroup",
+    component: () => import("../views/JoinGroupView.vue"),
+  },
 ];
 
 const router = createRouter({

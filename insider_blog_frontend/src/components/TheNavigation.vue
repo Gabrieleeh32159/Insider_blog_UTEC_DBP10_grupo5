@@ -13,9 +13,11 @@
     <!-- Navbar Right Side -->
     <div class="horizontal" v-if="user">
       <router-link to="/newpost">Nueva publicación</router-link>
-      <router-link to="/">Unirse a un grupo</router-link>
-      <router-link to="/">Crear un grupo</router-link>
-      <router-link to="/">{{ user.username }}</router-link>
+      <router-link to="/joingroup">Unirse a un grupo</router-link>
+      <router-link to="/newgroup">Crear un grupo</router-link>
+      <router-link :to="{ name: 'Users', params: { slug: user.id } }">{{
+        user.username
+      }}</router-link>
       <a href="javascript:void(0)" @click="handleClick" class="nav0link"
         >Logout</a
       >

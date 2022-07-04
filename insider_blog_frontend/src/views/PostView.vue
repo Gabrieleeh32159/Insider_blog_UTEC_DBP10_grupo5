@@ -28,18 +28,16 @@
 </template>
 
 <script>
-import store from '@/vuex'
-export default{
-    name: 'Posts',
-    props: {
-        slug: {
-            type: String,
-            required: true,
-        },
-    }
-
-}
-
+//import store from "@/vuex";
+export default {
+  name: "Posts",
+  props: {
+    slug: {
+      type: String,
+      required: true,
+    },
+  },
+};
 </script>
 
 <style scoped>

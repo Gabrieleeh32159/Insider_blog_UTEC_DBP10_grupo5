@@ -31,6 +31,9 @@ def pagination(request, selection, decreasing = False):
     elif decreasing:
         start = len(selection) - items_per_page
         end = len(selection)
+        items = [item.format() for item in selection]
+        current = items[start:end]
+        return current[::-1]
     else: 
         start = (page - 1)*items_per_page
         end = (start + items_per_page)
@@ -41,13 +44,14 @@ def pagination(request, selection, decreasing = False):
 def create_app(test_config=None):
     app = Flask(__name__)
     setup_db(app)
-    CORS(app,origin=['http://localhost:3000'], max_age=10)
+    CORS(app,origin=['http://127.0.0.1:3000/'], max_age=1000)
 
     @app.after_request
     def after_request(response):
-        response.headers.add('Access-Control-Allow-Origin', '*')
-        response.headers.add('Access-Control-Allow-Headers', '*')
-        response.headers.add('Access-Control-Allow-Methods', '*')
+        #response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+        response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+        response.headers.add('Access-Control-Allow-Credentials', 'true')
         return response
 
     #*USERS
@@ -233,8 +237,8 @@ def create_app(test_config=None):
             return jsonify({
                 "success":True,
                 "deleted":user_id,
-                "todos":users,
-                "total_todos":len(selection)
+                "users":users,
+                "total_users":len(selection)
             })
 
         except Exception as e:
@@ -259,15 +263,14 @@ def create_app(test_config=None):
 
             group = Group(group_name=groupname)
 
-            group.insert()
-            new_user_id = group.id
+            group_id = group.insert()
 
             selection = Group.query.order_by('id').all()
             current_groups = pagination(request, selection)
 
             return jsonify({
                 'success':True,
-                'created':new_user_id,
+                'created':group_id,
                 'groups': current_groups,
                 'total_groups': len(selection)
             })
@@ -431,7 +434,7 @@ def create_app(test_config=None):
                 error_404 = True
                 abort(404)
 
-            posts = pagination(request=request, selection=selection)
+            posts = pagination(request=request, selection=selection, decreasing=True)
 
             return jsonify({
             'success': True,
