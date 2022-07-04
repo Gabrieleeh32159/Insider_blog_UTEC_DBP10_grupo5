@@ -22,10 +22,10 @@
 
         <div class="form-group">
           <label>Group</label>
-          <select class="form-control form-control-lg" v-model="group">
-              <option v-for="group_name in user.groups_ids " 
-                value={{group(group_name)}}
-                >{{group_name}}</option>
+          <select class="form-control form-control-lg" v-model="selected_group">
+              <option v-for="group_name in user.groups_ids">
+                {{group_name}}
+              </option>
           </select>
         </div>
 
@@ -41,23 +41,20 @@
 import router from "@/router";
 import store from "@/vuex";
 import axios from "axios";
-import { mapGetters } from "vuex";
 export default {
   name: "NewPost",
   data() {
     return {
       title: "",
       content: "",
-      group: 0,
+      group_id: 0,
+      selected_group: 0,
     };
   },
   computed: {
     user(){
       return store.state.user
     },
-    group(search) {
-      return store.state.groups.find((g) => g.group_name === search)
-    }
   },
   methods: {
     async handleSubmit() {
@@ -65,7 +62,7 @@ export default {
         title: this.title,
         content: this.content,
         user_id: store.state.user.id,
-        group_id: this.group,
+        group_id: store.state.groups.find((g) => g.group_name == this.selected_group).id,
       });
       await router.push("/");
     },

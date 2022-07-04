@@ -43,14 +43,13 @@
         </button>
       </div>
     </form>
-    <p v-if="showError" id="error">Error!!!</p>
   </header>
 </template>
 
 <script>
-// Aca deberiamos mandar a la api los datos del usuario pa crear
 import router from "@/router";
 import axios from "axios";
+
 export default {
   name: "Register",
   compontents: {},
@@ -59,21 +58,19 @@ export default {
       username: "",
       email: "",
       password: "",
+      confirm_pass: "",
     };
   },
   methods: {
     async handleSubmit() {
-      try {
-        await axios.post("/users", {
-          username: this.username,
-          email: this.email,
-          password: this.password,
-        });
-        this.showError = false;
-      } catch (error) {
-        this.showError = true;
-      }
-      await router.push("/login");
+      if(this.password == this.confirm_pass){
+          await axios.post("/users", {
+            username: this.username,
+            email: this.email,
+            password: this.password,
+          });
+        await router.push("/login");
+      };
     },
   },
 };
