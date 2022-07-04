@@ -20,8 +20,8 @@ const store = new Vuex.Store({
       context.commit("user", user);
     },
     posts(context, posts) {
-        context.commit("posts", posts);
-    }
+      context.commit("posts", posts);
+    },
   },
   mutations: {
     user(state, user) {

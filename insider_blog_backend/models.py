@@ -5,7 +5,7 @@ import base64
 
 db_name = "proyecto"
 password = os.environ.get('pg_pass')
-port = 9173
+port = os.environ.get('port')
 db_path='postgresql://postgres:{}@localhost:{}/{}'.format(password,port,db_name)
 secret_key = 'DBPPr0y3ct70F1n4l'
 

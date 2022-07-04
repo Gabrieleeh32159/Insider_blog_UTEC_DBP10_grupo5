@@ -32,20 +32,18 @@
 </template>
 
 <script>
-import axios from "axios";
+//import axios from "axios";
 import { mapGetters } from "vuex";
-
-
 
 export default {
   name: "Home",
   computed: {
     ...mapGetters(["user"]),
     ...mapGetters(["posts"]),
-  }, 
-  async created(){
-    console.log(this.posts)
-  }
+  },
+  async created() {
+    console.log(this.posts);
+  },
 };
 </script>
 
