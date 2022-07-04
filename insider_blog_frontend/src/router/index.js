@@ -61,7 +61,7 @@ const routes = [
     name: "edit",
     props: true,
     component: () => import("../views/EditView.vue"),
-  }
+  },
 ];
 
 const router = createRouter({

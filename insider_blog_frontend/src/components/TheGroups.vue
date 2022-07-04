@@ -4,10 +4,11 @@
     <p>Estos son los grupos a los que perteneces actualmente.</p>
     <div v-if="user">
       <li v-for="group in user.groups_ids" v-bind:key="group">
-        <router-link :to="{ name: 'Groups', params: { slug: group } }"
-          class="group-title">{{
-          group
-        }}</router-link>
+        <router-link
+          :to="{ name: 'Groups', params: { slug: group } }"
+          class="group-title"
+          >{{ group }}</router-link
+        >
       </li>
     </div>
   </div>
@@ -21,9 +22,7 @@ export default {
   data() {
     return {};
   },
-  props: {
-
-  },
+  props: {},
   computed: {
     ...mapGetters(["user"]),
     ...mapGetters(["groups"]),
@@ -44,7 +43,7 @@ export default {
   width: auto;
 }
 
-.group-title{
+.group-title {
   color: #262626;
   text-decoration: none;
   font-size: 20px;
