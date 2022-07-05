@@ -1,7 +1,7 @@
 <template>
   <header class="site-header">
     <form @submit.prevent="handleSubmit">
-      <h3>Edit {{user.username}} Profile'</h3>
+      <h3>Edit {{ user.username }} Profile'</h3>
       <div class="form-group">
         <label>Username</label>
         <input
@@ -19,7 +19,12 @@
 
       <div class="form-group">
         <label>Description</label>
-        <input type="text" name="description" v-model="description" class="form-control" />
+        <input
+          type="text"
+          name="description"
+          v-model="description"
+          class="form-control"
+        />
       </div>
 
       <div class="form-group">
@@ -52,7 +57,6 @@
 </template>
 
 <script>
-// Aca deberiamos mandar a la api los datos del usuario pa crear
 import router from "@/router";
 import store from "@/vuex";
 import axios from "axios";
@@ -68,26 +72,24 @@ export default {
       confirm_pass: "",
     };
   },
-  props:{
+  props: {
     slug: {
       type: String,
       required: true,
     },
   },
-  computed:{
-    user(){
+  computed: {
+    user() {
       return store.state.user;
-    }
+    },
   },
   methods: {
     async handleSubmit() {
-        await axios.patch("/users/"+this.slug, 
-        {
-          username: this.username
-        });
-      
+      await axios.patch("/users/" + this.slug, {
+        username: this.username,
+      });
 
-      await router.push("/"+this.slug);
+      await router.push("/" + this.slug);
     },
   },
 };

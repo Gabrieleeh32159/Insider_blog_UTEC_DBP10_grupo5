@@ -2,9 +2,6 @@
   <TheNavigation />
   <div class="algo">
     <router-view v-bind:key="$route.path" />
-    <div>
-      <TheGroups />
-    </div>
   </div>
 </template>
 
@@ -12,6 +9,7 @@
 import TheNavigation from "./components/TheNavigation.vue";
 import TheGroups from "./components/TheGroups.vue";
 import axios from "axios";
+import store from "./vuex";
 
 export default {
   name: "App",
@@ -20,27 +18,20 @@ export default {
     TheGroups,
   },
   async created() {
-    const post_response = await axios.get("http://localhost:5000/posts");
-    const posts = await post_response.data.posts;
-    this.$store.dispatch("posts", posts);
-
-    const groups_response = await axios.get("http://localhost:5000/groups");
-    const groups = await groups_response.data.grupos;
-    this.$store.dispatch("groups", groups);
 
     const users_response = await axios.get("/users");
     const users = await users_response.data.users;
     this.$store.dispatch("users", users);
 
     if (localStorage.getItem("token" !== null)) {
-      const response = await axios.get("http://localhost:5000/user", {
+      const response = await axios.get("/user", {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
       });
       this.$store.dispatch("user", response.data);
-      console.log(response.data);
     }
+    console.log(store.state);
   },
 };
 </script>

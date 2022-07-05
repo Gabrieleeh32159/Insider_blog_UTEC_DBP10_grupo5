@@ -23,9 +23,12 @@
         <div class="form-group">
           <label>Group</label>
           <select class="form-control form-control-lg" v-model="selected_group">
-              <option v-for="group_name in user.groups_ids">
-                {{group_name}}
-              </option>
+            <option
+              v-for="group_name in user.groups_ids"
+              v-bind:key="group_name"
+            >
+              {{ group_name }}
+            </option>
           </select>
         </div>
 
@@ -52,16 +55,18 @@ export default {
     };
   },
   computed: {
-    user(){
-      return store.state.user
+    user() {
+      return store.state.user;
     },
   },
   methods: {
     async handleSubmit() {
-      await axios.post("http://127.0.0.1:5000/posts", {
+      console.log(store.state.groups)
+      await axios.post("/posts", {
         title: this.title,
         content: this.content,
         user_id: store.state.user.id,
+        group_id: this.selected_group,
         group_id: store.state.groups.find((g) => g.group_name == this.selected_group).id,
       });
       await router.push("/");
