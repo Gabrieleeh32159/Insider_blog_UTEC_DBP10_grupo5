@@ -23,7 +23,6 @@ items_per_page = 5
 
 def pagination(request, selection, decreasing=False):
     page = request.args.get('page', None, type=int)
-
     if page is None and not decreasing:
         start = 0
         end = 5
@@ -141,8 +140,6 @@ def create_app(test_config=None):
 
         user = User(public_id=str(uuid.uuid4()), username=username, description=description,
                     email=email, password=hashed_password, image_file=image)
-
-        print(user)
 
         new_user_id = user.insert()
         group_user = GroupUser(group_id=0, user_id=new_user_id)
@@ -377,99 +374,76 @@ def create_app(test_config=None):
     #* POSTS
     @app.route('/posts', methods=['POST'])
     def create_post():
-        error_404 = False
-        error_422 = False
-        try:
-            body = request.get_json()
-            user_id = body.get('user_id', None)
-            group_id = body.get('group_id', None)
+        body = request.get_json()
+        user_id = body.get('user_id', None)
+        group_id = body.get('group_id', None)
+        title = body.get('title', None)
+        content = body.get('content', None)
 
-            user = User.query.filter(User.id == user_id).one_or_none()
-            group = Group.query.filter(Group.id == group_id).one_or_none()
+        user = User.query.filter(User.id == user_id).one_or_none()
+        group = Group.query.filter(Group.id == group_id).one_or_none()
 
-            if user is None or group is None:
-                error_404 = True
-                abort(404)
+        if title is None or content is None:
+            abort(422)
 
-            title = body.get('title', None)
-            content = body.get('content', None)
+        if user is None or group is None:
+            abort(404)
 
-            if title is None or content is None:
-                error_422 = False
-                abort(422)
+        post = Post(title=title, content=content,
+                    user_id=user_id, group_id=group_id)
 
-            post = Post(title=title, content=content,
-                        user_id=user_id, group_id=group_id)
+        post_id = post.insert()
 
-            post_id = post.insert()
-
-            selection = Post.query.filter(
-                Post.group_id == group_id and Post.user_id == user_id).order_by('id').all()
-            current_posts = pagination(
-                request=request, selection=selection, decreasing=True)
-            return jsonify({
-                'success': True,
-                'id': post_id,
-                'posts': current_posts
-            })
-
-        except Exception as e:
-            print(e)
-            if error_404:
-                abort(404)
-            elif error_422:
-                abort(422)
-            else:
-                abort(500)
+        selection = Post.query.filter(
+            Post.group_id == group_id and Post.user_id == user_id).order_by('id').all()
+        current_posts = pagination(
+            request=request, selection=selection, decreasing=True)
+        return jsonify({
+            'success': True,
+            'id': post_id,
+            'posts': current_posts,
+            'created': post_id
+        })
 
     @app.route('/posts', methods=['GET'])
     def get_posts():
-        error_404 = False
-        try:
-            user_id = request.args.get('user_id', None, type=int)
-            user = User.query.filter(User.id == user_id).one_or_none()
+        user_id = request.args.get('user_id', None, type=int)
+        user = User.query.filter(User.id == user_id).one_or_none()
 
-            group_id = request.args.get('group_id', None, type=int)
-            group = Group.query.filter(Group.id == group_id).one_or_none()
+        group_id = request.args.get('group_id', None, type=int)
+        group = Group.query.filter(Group.id == group_id).one_or_none()
 
-            if (user_id is not None and user is None) or (group_id is not None and group is None):
-                error_404 = True
-                abort(404)
+        if (user_id is not None and user is None) or (group_id is not None and group is None):
+            abort(404)
 
-            #* Obtener posts en un grupo
-            if user_id is None and group_id is not None:
-                selection = Post.query.filter(
-                    Post.group_id == group_id).order_by('id').all()
-            #* Obtener posts de una persona
-            elif group_id is None and user_id is not None:
-                selection = Post.query.filter(
-                    Post.user_id == user_id).order_by('id').all()
-            #* Obtener posts de un usuario en un grupo
-            elif group_id is not None and user_id is not None:
-                selection = Post.query.filter(
-                    Post.user_id == user_id and Post.group_id == group_id).order_by('id').all()
-            #* Obtener todos los posts
-            elif group_id is None and user_id is None:
-                selection = Post.query.order_by('id').all()
+        #* Obtener posts en un grupo
+        if user_id is None and group_id is not None:
+            selection = Post.query.filter(
+                Post.group_id == group_id).order_by('id').all()
+        #* Obtener posts de una persona
+        elif group_id is None and user_id is not None:
+            selection = Post.query.filter(
+                Post.user_id == user_id).order_by('id').all()
+        #* Obtener posts de un usuario en un grupo
+        elif group_id is not None and user_id is not None:
+            selection = Post.query.filter(
+                Post.user_id == user_id and Post.group_id == group_id).order_by('id').all()
+        #* Obtener todos los posts
+        elif group_id is None and user_id is None:
+            selection = Post.query.order_by('id').all()
 
-            if len(selection) == 0:
-                error_404 = True
-                abort(404)
+        posts = pagination(
+            request=request, selection=selection, decreasing=True)
+        posts2 = pagination(request, selection)
 
-            posts = pagination(
-                request=request, selection=selection, decreasing=True)
+        if len(posts) == 0 or len(posts2) == 0:
+            abort(404)
 
-            return jsonify({
-                'success': True,
-                'posts': posts,
-                'amount_posts': len(selection)
-            })
-        except Exception as e:
-            print(e)
-            if error_404:
-                abort(404)
-            else:
-                abort(500)
+        return jsonify({
+            'success': True,
+            'posts': posts,
+            'amount_posts': len(selection)
+        })
 
     @app.route('/posts/<int:post_id>', methods=['PATCH'])
     def update_post(post_id):
@@ -520,7 +494,7 @@ def create_app(test_config=None):
                 'success': True,
                 'id': post_id,
                 'posts': current_posts,
-                'amonunt_posts': len(selection)
+                'amount_posts': len(selection)
             })
 
         except Exception as e:

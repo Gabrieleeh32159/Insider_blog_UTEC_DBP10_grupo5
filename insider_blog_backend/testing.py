@@ -42,8 +42,15 @@ class TestProyecto(unittest.TestCase):
 
         self.new_post_2 = {
             'user_id': 1,
-            'group_id': 0,
+            'group_id': 1,
         }
+
+        res = self.client().get('/users')
+        data = json.loads(res.data)
+
+        if data['success'] != True:
+            self.client().post('/users', json=self.new_user)
+            self.client().post('/groups', json=self.new_group)
 
     #---------Users-----------#
 
@@ -210,7 +217,7 @@ class TestProyecto(unittest.TestCase):
         self.assertEqual(data['success'], True)
         self.assertEqual(data['id'], str(updated_id))
 
-    def test_update_group_success(self):
+    def test_update_group_failed(self):
         res = self.client().patch('/groups/10000')
         data = json.loads(res.data)
 
@@ -219,6 +226,23 @@ class TestProyecto(unittest.TestCase):
         self.assertEqual(data['message'], 'resource not found')
 
     #-----------------POSTS---------------------#
+
+    def test_get_posts_success(self):
+        res = self.client().get('/posts')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['amount_posts'])
+        self.assertTrue(len(data['posts']))
+
+    def test_get_posts_sent_requesting_beyond_valid_page_404(self):
+        res = self.client().get('/posts?page=10000')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'resource not found')
 
     def test_create_post_sucess(self):
         res = self.client().post('/posts', json=self.new_post)
@@ -235,6 +259,101 @@ class TestProyecto(unittest.TestCase):
         self.assertEqual(res.status_code, 422)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'Unprocessable')
+
+    def test_update_post_success(self):
+        res0 = self.client().post('/posts', json=self.new_post)
+        data0 = json.loads(res0.data)
+        updated_id = data0['created']
+
+        res = self.client().patch('/posts/' + str(updated_id), json=self.new_post)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['id'], updated_id)
+
+    def test_update_post_failed(self):
+        res = self.client().patch('/posts/10000')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'resource not found')
+
+    def test_delete_post_success(self):
+        res0 = self.client().post('/posts', json=self.new_post)
+        data0 = json.loads(res0.data)
+        deleted_id = data0['created']
+
+        res = self.client().delete('/posts/' + str(deleted_id))
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['id'], deleted_id)
+        self.assertTrue(len(data['posts']))
+        self.assertTrue(data['amount_posts'])
+
+    def test_delete_post_failed(self):
+        res = self.client().delete('/posts/10000')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'resource not found')
+
+    #-------------------GroupUser---------------------#
+
+    def test_join_user_group_success(self):
+        res0 = self.client().post('/users', json=self.new_user)
+        data0 = json.loads(res0.data)
+        created_user = data0['created']
+
+        res1 = self.client().post('/groups', json=self.new_group)
+        data1 = json.loads(res1.data)
+        created_group = data1['created']
+
+        res = self.client().post('/user/' + str(created_user) +
+                                 '/group/' + str(created_group))
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+
+    def test_join_user_group_failed(self):
+        res = self.client().post('/user/10000/group/10000')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'resource not found')
+
+    def test_delete_user_group_success(self):
+        res0 = self.client().post('/users', json=self.new_user)
+        data0 = json.loads(res0.data)
+        created_user = data0['created']
+
+        res1 = self.client().post('/groups', json=self.new_group)
+        data1 = json.loads(res1.data)
+        created_group = data1['created']
+
+        res = self.client().post('/user/' + str(created_user) +
+                                 '/group/' + str(created_group))
+
+        res3 = self.client().delete('/group/' + str(created_group) +
+                                    '/user/' + str(created_user))
+        data = json.loads(res3.data)
+
+        self.assertEqual(res3.status_code, 200)
+        self.assertEqual(data['success'], True)
+
+    def test_delete_user_group_failed(self):
+        res = self.client().delete('/group/10000/user/10000')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'resource not found')
 
     def tearDown(self):
         pass
