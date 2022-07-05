@@ -199,3 +199,9 @@ class GroupUser(db.Model):
             db.session.rollback()
         finally:
             db.session.close()
+
+    def format(self):
+        return {
+            'group_id': self.group_id,
+            'user_id': self.group_id,
+        }
