@@ -1,10 +1,14 @@
 import unittest
 import base64
 from random import randint
+import string
+import random
 
 from server import create_app, setup_db
 from models import setup_db, User, Post, Group, GroupUser
 import json
+
+length_of_string = 8
 
 
 class TestProyecto(unittest.TestCase):
@@ -17,12 +21,16 @@ class TestProyecto(unittest.TestCase):
         setup_db(self.app, self.database_path)
 
         self.new_user = {
-            'username': "".join([str(randint(0, 100)) for _ in range(10)]),
+            'username': ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(length_of_string)),
             'description': 'xd',
-            'email': "".join([str(randint(0, 100)) for _ in range(10)]),
+            'email': ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(length_of_string)),
             'image': base64.b64encode(
                 open('server/imagenes/default.jpg', 'rb').read()).decode('utf-8'),
             'password': 'xd'
+        }
+
+        self.new_group = {
+            'groupname': ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(length_of_string))
         }
 
     #---------Users-----------#
@@ -83,8 +91,7 @@ class TestProyecto(unittest.TestCase):
         data0 = json.loads(res0.data)
         updated_id = data0['created']
 
-        res = self.client().patch('/users/' + str(updated_id),
-                                  json={"username": "xd2"})
+        res = self.client().patch('/users/' + str(updated_id), json=self.new_user)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -92,7 +99,7 @@ class TestProyecto(unittest.TestCase):
         self.assertEqual(data['id'], str(updated_id))
 
     def test_update_user_failed(self):
-        res = self.client().delete('/users/10000')
+        res = self.client().patch('/users/10000')
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
@@ -115,6 +122,84 @@ class TestProyecto(unittest.TestCase):
 
     def test_delete_user_failed(self):
         res = self.client().delete('/users/10000')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'resource not found')
+
+    #---------Groups------------------#
+
+    def test_get_group_success(self):
+        res = self.client().get('/groups')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['total_groups'])
+        self.assertTrue(len(data['grupos']))
+
+    def test_get_groups_sent_requesting_beyond_valid_page_404(self):
+        res = self.client().get('/groups?page=10000')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'resource not found')
+
+    def test_create_group_success(self):
+        res = self.client().post('/groups', json=self.new_group)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(len(data['groups']))
+        self.assertTrue(data['total_groups'])
+
+    def test_create_group_failed(self):
+        res = self.client().post('/groups', json={})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Unprocessable')
+
+    def test_delete_group_success(self):
+        res0 = self.client().post('/groups', json=self.new_group)
+        data0 = json.loads(res0.data)
+        deleted_id = data0['created']
+
+        res = self.client().delete('/groups/' + str(deleted_id))
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['deleted'], deleted_id)
+        self.assertTrue(len(data['groups']))
+        self.assertTrue(data['total_groups'])
+
+    def test_delete_group_failed(self):
+        res = self.client().delete('/groups/10000')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'resource not found')
+
+    def test_update_group_sucess(self):
+        res0 = self.client().post('/groups', json=self.new_group)
+        data0 = json.loads(res0.data)
+        updated_id = data0['created']
+
+        res = self.client().patch('/groups/' + str(updated_id), json=self.new_group)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['id'], str(updated_id))
+
+    def test_update_group_success(self):
+        res = self.client().patch('/groups/10000')
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
