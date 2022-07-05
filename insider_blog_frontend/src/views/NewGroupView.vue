@@ -20,7 +20,6 @@
 //import router from "@/router";
 import axios from "axios";
 import { mapGetters } from "vuex";
-import router from "@/router";
 import TheGroups from "@/components/TheGroups.vue";
 export default {
   name: "NewGroup",
