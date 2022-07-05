@@ -33,6 +33,18 @@ class TestProyecto(unittest.TestCase):
             'groupname': ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for _ in range(length_of_string))
         }
 
+        self.new_post = {
+            'title': 'xd',
+            'content': 'xd',
+            'user_id': 1,
+            'group_id': 1,
+        }
+
+        self.new_post_2 = {
+            'user_id': 1,
+            'group_id': 0,
+        }
+
     #---------Users-----------#
 
     def test_get_users_success(self):
@@ -205,6 +217,24 @@ class TestProyecto(unittest.TestCase):
         self.assertEqual(res.status_code, 404)
         self.assertEqual(data['success'], False)
         self.assertEqual(data['message'], 'resource not found')
+
+    #-----------------POSTS---------------------#
+
+    def test_create_post_sucess(self):
+        res = self.client().post('/posts', json=self.new_post)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['posts'])
+
+    def test_create_post_failed(self):
+        res = self.client().post('/posts', json=self.new_post_2)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'Unprocessable')
 
     def tearDown(self):
         pass

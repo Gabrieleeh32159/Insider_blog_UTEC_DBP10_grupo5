@@ -378,27 +378,25 @@ def create_app(test_config=None):
     @app.route('/posts', methods=['POST'])
     def create_post():
         error_404 = False
+        error_422 = False
         try:
             body = request.get_json()
-            user_id = body.get('user_id')
-            group_id = body.get('group_id')
+            user_id = body.get('user_id', None)
+            group_id = body.get('group_id', None)
 
             user = User.query.filter(User.id == user_id).one_or_none()
             group = Group.query.filter(Group.id == group_id).one_or_none()
 
             if user is None or group is None:
                 error_404 = True
-                print('404')
                 abort(404)
-
-            body = request.get_json()
 
             title = body.get('title', None)
             content = body.get('content', None)
 
             if title is None or content is None:
-                error_404 = True
-                abort(404)
+                error_422 = False
+                abort(422)
 
             post = Post(title=title, content=content,
                         user_id=user_id, group_id=group_id)
@@ -419,6 +417,8 @@ def create_app(test_config=None):
             print(e)
             if error_404:
                 abort(404)
+            elif error_422:
+                abort(422)
             else:
                 abort(500)
 
