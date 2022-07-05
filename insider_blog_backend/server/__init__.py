@@ -1,6 +1,7 @@
 from argparse import _AttributeHolder
 from datetime import datetime, timedelta
 import json
+from pickle import TRUE
 import uuid
 import psycopg2
 from flask import (
@@ -558,7 +559,52 @@ def create_app(test_config=None):
             else:
                 abort(500)
 
+    @app.route('/groupusers', methods=['GET'])
+    def get_groupusers():
+        selection = GroupUser.query.order_by('user_id').all()
+        groupusers = pagination(request, selection)
+
+        if len(groupusers) == 0:
+            abort(404)
+
+        return jsonify({
+            'success': True,
+            'groupusers': groupusers,
+            'total_groupusers': len(selection)
+        })
+
+    @app.route('/group/<group_id>/user/<user_id>', methods=['PATCH'])
+    def update_group_user(group_id, user_id):
+        error_404 = False
+        try:
+            gropuser = GroupUser.query.filter(
+                GroupUser.user_id == user_id).one_or_none()
+
+            if gropuser is None:
+                error_404 = True
+                abort(404)
+
+            body = request.get_json()
+            if 'group_id' in body:
+                group_new_id = body.get('group_id')
+                gropuser.group_id = body.get('group_id')
+
+            gropuser.update()
+
+            return jsonify({
+                'success': True,
+                'id': group_new_id
+            })
+
+        except Exception as e:
+            print(e)
+            if error_404:
+                abort(404)
+            else:
+                abort(500)
+
     # ! ERROR HANDLERS
+
     @app.errorhandler(404)
     def not_found(error):
         return jsonify({

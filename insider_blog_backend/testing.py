@@ -45,6 +45,10 @@ class TestProyecto(unittest.TestCase):
             'group_id': 1,
         }
 
+        self.new_groupuser = {
+            'group_id': 1
+        }
+
         res = self.client().get('/users')
         data = json.loads(res.data)
 
@@ -66,6 +70,7 @@ class TestProyecto(unittest.TestCase):
         self.assertTrue(len(data['users']))
 
     def test_get_users_sent_requesting_beyond_valid_page_404(self):
+        self.client().post('/users', json=self.new_user)
         res = self.client().get('/users?page=10000')
         data = json.loads(res.data)
 
@@ -150,6 +155,7 @@ class TestProyecto(unittest.TestCase):
     #---------Groups------------------#
 
     def test_get_group_success(self):
+        res = self.client().post('/groups', json=self.new_group)
         res = self.client().get('/groups')
         data = json.loads(res.data)
 
@@ -159,6 +165,7 @@ class TestProyecto(unittest.TestCase):
         self.assertTrue(len(data['grupos']))
 
     def test_get_groups_sent_requesting_beyond_valid_page_404(self):
+        res = self.client().post('/groups', json=self.new_group)
         res = self.client().get('/groups?page=10000')
         data = json.loads(res.data)
 
@@ -228,6 +235,7 @@ class TestProyecto(unittest.TestCase):
     #-----------------POSTS---------------------#
 
     def test_get_posts_success(self):
+        res = self.client().post('/posts', json=self.new_post)
         res = self.client().get('/posts')
         data = json.loads(res.data)
 
@@ -237,6 +245,7 @@ class TestProyecto(unittest.TestCase):
         self.assertTrue(len(data['posts']))
 
     def test_get_posts_sent_requesting_beyond_valid_page_404(self):
+        res = self.client().post('/posts', json=self.new_post)
         res = self.client().get('/posts?page=10000')
         data = json.loads(res.data)
 
@@ -304,6 +313,45 @@ class TestProyecto(unittest.TestCase):
 
     #-------------------GroupUser---------------------#
 
+    def test_get_user_group_success(self):
+        res0 = self.client().post('/users', json=self.new_user)
+        data0 = json.loads(res0.data)
+        created_user = data0['created']
+
+        res1 = self.client().post('/groups', json=self.new_group)
+        data1 = json.loads(res1.data)
+        created_group = data1['created']
+
+        res = self.client().post('/user/' + str(created_user) +
+                                 '/group/' + str(created_group))
+
+        res = self.client().get('/groupusers')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertTrue(data['total_groupusers'])
+        self.assertTrue(len(data['groupusers']))
+
+    def test_get_user_group_sent_requesting_beyond_valid_page_404(self):
+        res0 = self.client().post('/users', json=self.new_user)
+        data0 = json.loads(res0.data)
+        created_user = data0['created']
+
+        res1 = self.client().post('/groups', json=self.new_group)
+        data1 = json.loads(res1.data)
+        created_group = data1['created']
+
+        res = self.client().post('/user/' + str(created_user) +
+                                 '/group/' + str(created_group))
+
+        res = self.client().get('/groupusers?page=10000')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'resource not found')
+
     def test_join_user_group_success(self):
         res0 = self.client().post('/users', json=self.new_user)
         data0 = json.loads(res0.data)
@@ -349,6 +397,34 @@ class TestProyecto(unittest.TestCase):
 
     def test_delete_user_group_failed(self):
         res = self.client().delete('/group/10000/user/10000')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['message'], 'resource not found')
+
+    def test_update_group_user_success(self):
+        res0 = self.client().post('/users', json=self.new_user)
+        data0 = json.loads(res0.data)
+        created_user = data0['created']
+
+        res1 = self.client().post('/groups', json=self.new_group)
+        data1 = json.loads(res1.data)
+        created_group = data1['created']
+
+        res = self.client().post('/user/' + str(created_user) +
+                                 '/group/' + str(created_group))
+
+        res = self.client().patch('/group/' + str(created_group) + "/user/" +
+                                  str(created_user),  json=self.new_groupuser)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(data['success'], True)
+        self.assertEqual(data['id'], 1)
+
+    def test_update_group_user_failed(self):
+        res = self.client().patch('/group/10000/user/1000', json={})
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 404)
