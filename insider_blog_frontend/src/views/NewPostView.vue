@@ -58,20 +58,16 @@ export default {
     user() {
       return store.state.user;
     },
-
-    group(search) {
-      return store.state.groups.find((g) => g.group_name === search);
-    },
   },
   methods: {
     async handleSubmit() {
-      await axios.post("http://127.0.0.1:5000/posts", {
+      console.log(store.state.groups)
+      await axios.post("/posts", {
         title: this.title,
         content: this.content,
         user_id: store.state.user.id,
-        group_id: store.state.groups.find(
-          (g) => g.group_name == this.selected_group
-        ).id,
+        group_id: this.selected_group,
+        group_id: store.state.groups.find((g) => g.group_name == this.selected_group).id,
       });
       await router.push("/");
     },

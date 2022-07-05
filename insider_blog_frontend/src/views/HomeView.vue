@@ -40,6 +40,7 @@
 import axios from "axios";
 import TheGroups from "../components/TheGroups.vue";
 import { mapGetters } from "vuex";
+import store from "@/vuex";
 
 export default {
   components: {
@@ -55,6 +56,12 @@ export default {
     const post_response = await axios.get("http://localhost:5000/posts");
     const posts = await post_response.data.posts;
     this.$store.dispatch("posts", posts);
+
+    const groups_response = await axios.get("/groups");
+    const groups = await groups_response.data.grupos;
+    this.$store.dispatch("groups", groups);
+
+    console.log(store.state)
   },
 };
 </script>

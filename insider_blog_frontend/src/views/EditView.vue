@@ -57,7 +57,6 @@
 </template>
 
 <script>
-// Aca deberiamos mandar a la api los datos del usuario pa crear
 import router from "@/router";
 import store from "@/vuex";
 import axios from "axios";
