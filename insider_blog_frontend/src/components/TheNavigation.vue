@@ -101,7 +101,7 @@ export default {
 }
 
 .auth-wrapper .form-control:focus {
-  border-color: #167bff;
+  border-color: #1372ed;
   box-shadow: none;
 }
 
@@ -125,6 +125,6 @@ export default {
 }
 
 .forgot-password a {
-  color: #167bff;
+  color: #126ee6;
 }
 </style>
