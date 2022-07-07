@@ -1,20 +1,22 @@
 <template>
-  <div class="container">
-    <div class="account-info">
-      <img class="account-img" src="../assets/default.jpg" />
-      <div class="media-body">
-        <h2 class="account-heading mt-lg-4">{{ user_f.username }}</h2>
-        <p class="text-secondary">{{ user_f.email }}</p>
-      </div>
-    </div>
-    <div v-if="user">
-      <form @submit="handleSubmit">
-        <div v-if="this.user.id == this.slug" class="form-group">
-          <router-link :to="{ name: 'edit', params: { slug: this.user.id } }">
-            <button class="btn btn-primary btn-block">Edit</button>
-          </router-link>
+  <div style="display: flex; flex-direction: column; align-items: center">
+    <div class="container">
+      <div class="account-info">
+        <img class="account-img" src="../assets/default.jpg" />
+        <div class="media-body">
+          <h2 class="account-heading mt-lg-4">{{ user_f.username }}</h2>
+          <p class="text-secondary">{{ user_f.email }}</p>
         </div>
-      </form>
+      </div>
+      <div v-if="user">
+        <form @submit="handleSubmit">
+          <div v-if="this.user.id == this.slug" class="form-group">
+            <router-link :to="{ name: 'edit', params: { slug: this.user.id } }">
+              <button class="btn btn-primary btn-block">Edit</button>
+            </router-link>
+          </div>
+        </form>
+      </div>
     </div>
     <div class="posts">
       <div v-for="item in posts" v-bind:key="item.user_id">
@@ -82,9 +84,7 @@ export default {
 
 .container {
   padding: 20px;
-  margin-top: 20px;
-  margin-left: 190px;
-  margin-bottom: 30px;
+  margin-block: 40px;
   width: 45%;
   border: 1px solid #dddddd;
   display: flex;
@@ -106,7 +106,7 @@ export default {
   margin-top: 2px;
   margin-left: 19px;
   margin-bottom: 3px;
-  width: 100%;
+  width: 80%;
 }
 
 .post-info {

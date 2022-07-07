@@ -2,12 +2,12 @@
   <div class="groups">
     <h2>Grupos</h2>
     <p>Estos son los grupos a los que perteneces actualmente.</p>
-    <div v-if="user">
-      <li v-for="group in user.groups_ids" v-bind:key="group">
+    <div v-if="this.user">
+      <li v-for="group in this.groups" v-bind:key="group">
         <router-link
           :to="{ name: 'Groups', params: { slug: group } }"
           class="group-title"
-          >{{ group }}</router-link
+          >{{ group.group_name }}</router-link
         >
       </li>
     </div>
@@ -15,28 +15,28 @@
 </template>
 
 <script>
-//import { report } from "process";
+import store from "@/vuex";
 import axios from "axios";
-import { mapGetters } from "vuex";
-//import axios from "axios";
 
 export default {
   name: "TheGroups",
   data() {
-    return {};
+    return {
+      groups: store.getters.groups,
+      user: store.getters.user,
+    };
   },
-  props: {},
-  computed: {
-    ...mapGetters(["user"]),
-    ...mapGetters(["groups"]),
-    groupget() {
-      return this.groups.find((g) => g.group_id === this.slug);
-    },
-  },
+
   async created() {
-    console.log(this.posts);
-    const groups_response = await axios.get("http://localhost:5000/groups");
-    const groups = await groups_response.data.posts;
+    let groups_response = await axios.get(
+      "http://localhost:5000/groups?page=0",
+      {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      }
+    );
+    let groups = await groups_response.data.grupos;
     this.$store.dispatch("groups", groups);
   },
 };

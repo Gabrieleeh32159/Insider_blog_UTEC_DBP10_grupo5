@@ -20,12 +20,12 @@
 //import router from "@/router";
 import axios from "axios";
 import { mapGetters } from "vuex";
-import TheGroups from "@/components/TheGroups.vue";
+//import store from "@/vuex";
 export default {
   name: "NewGroup",
   data() {
     return {
-      group_name: "",
+      groupname: "",
     };
   },
   computed: {
@@ -35,12 +35,16 @@ export default {
   },
   methods: {
     async handleSubmit() {
-      console.log(this.group_name, this.user.id);
-      let response = await axios.post("http://127.0.0.1:5000/groups", {
-        groupname: this.group_name,
+      let response = await axios.post("http://127.0.0.1:5000/groups?page=0", {
+        groupname: this.groupname,
         user_id: this.user.id,
+
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
       });
-      TheGroups.groups = response.data.groups;
+      this.$store.dispatch("groups", response.data.groups);
+      //TheGroups.groups = response.data.groups;
       this.$router.push("/");
     },
   },

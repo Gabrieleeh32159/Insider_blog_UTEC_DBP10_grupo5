@@ -25,11 +25,6 @@
     <div class="horizontal" v-if="!user">
       <router-link to="/login">Login</router-link>
       <router-link to="/register">Registrarse</router-link>
-
-      <!-- Si no esta loggeado 
-                  <a class="nav-item nav-link" href="/login">Iniciar sesión</a>
-                  <a class="nav-item nav-link" href="/register">Registrarse</a>
-                -->
     </div>
   </div>
 </template>

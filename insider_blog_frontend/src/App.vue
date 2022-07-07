@@ -7,7 +7,7 @@
 
 <script>
 import TheNavigation from "./components/TheNavigation.vue";
-import TheGroups from "./components/TheGroups.vue";
+//import TheGroups from "./components/TheGroups.vue";
 import axios from "axios";
 import store from "./vuex";
 
@@ -15,10 +15,9 @@ export default {
   name: "App",
   components: {
     TheNavigation,
-    TheGroups,
+    //TheGroups,
   },
   async created() {
-
     const users_response = await axios.get("/users");
     const users = await users_response.data.users;
     this.$store.dispatch("users", users);
@@ -31,7 +30,7 @@ export default {
       });
       this.$store.dispatch("user", response.data);
     }
-    console.log(store.state);
+    console.log(store.state.groups);
   },
 };
 </script>

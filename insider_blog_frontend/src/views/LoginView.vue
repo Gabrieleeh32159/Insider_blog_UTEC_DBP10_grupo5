@@ -26,20 +26,14 @@
         </div>
       </div>
     </form>
-    <div>
-      <TheGroups />
-    </div>
   </header>
 </template>
 
 <script>
-import TheGroups from "../components/TheGroups.vue";
 import axios from "axios";
+
 export default {
   name: "Login",
-  components: {
-    TheGroups,
-  },
   data() {
     return {
       username: "",
@@ -48,7 +42,7 @@ export default {
   },
   methods: {
     async handleSubmit() {
-      const response = await axios.post(
+      const login_response = await axios.post(
         "http://localhost:5000/login",
         {},
         {
@@ -58,8 +52,9 @@ export default {
           },
         }
       );
-      localStorage.setItem("token", response.data.token);
-      this.$store.dispatch("user", response.data.user);
+
+      localStorage.setItem("token", login_response.data.token);
+      this.$store.dispatch("user", login_response.data.user);
 
       this.$router.push("/");
     },

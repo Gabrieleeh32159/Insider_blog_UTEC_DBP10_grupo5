@@ -1,6 +1,6 @@
 import Vuex from "vuex";
 
-const state = {
+let state = {
   user: null,
   users: null,
   posts: null,

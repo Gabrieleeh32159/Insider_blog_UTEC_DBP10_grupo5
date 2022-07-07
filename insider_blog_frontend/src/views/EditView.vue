@@ -19,38 +19,36 @@
 
       <div class="form-group">
         <label>Description</label>
-        <input
-          type="text"
-          name="description"
-          v-model="description"
-          class="form-control"
-        />
+        <textarea v-model="description" class="form-control"></textarea>
       </div>
 
       <div class="form-group">
         <label>Password</label>
-        <input
-          type="password"
-          name="password"
-          v-model="password"
-          class="form-control"
-        />
+        <input v-model="password" class="form-control" />
       </div>
 
       <div class="form-group">
         <label>Confirm Password</label>
-        <input
-          type="password"
-          name="confirm_pass"
-          v-model="confirm_pass"
-          class="form-control"
-        />
+        <input v-model="confirm_pass" class="form-control" />
       </div>
 
       <div class="form-group">
         <button class="btn btn-primary btn-block" v-on:click="handleSubmit()">
           Submit
         </button>
+      </div>
+
+      <div
+        id="diferent-passwords-alert"
+        style="
+          background-color: rgba(255, 20, 50, 0.8);
+          border-radius: 10px;
+          border: solid 3px red;
+          margin-top: 20px;
+          display: none;
+        "
+      >
+        <h2>Contraseñas distintas</h2>
       </div>
     </form>
   </header>
@@ -85,11 +83,15 @@ export default {
   },
   methods: {
     async handleSubmit() {
-      await axios.patch("/users/" + this.slug, {
-        username: this.username,
-      });
+      if (this.password == this.confirm_pass) {
+        await axios.patch("/users/" + this.slug, {
+          username: this.username,
+        });
 
-      await router.push("/" + this.slug);
+        await router.push("/" + this.slug);
+      } else {
+        console.log("gil");
+      }
     },
   },
 };
