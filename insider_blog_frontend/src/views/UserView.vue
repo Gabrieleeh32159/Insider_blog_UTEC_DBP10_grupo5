@@ -6,6 +6,7 @@
         <div class="media-body">
           <h2 class="account-heading mt-lg-4">{{ user_f.username }}</h2>
           <p class="text-secondary">{{ user_f.email }}</p>
+          <p>{{ user_f.description }}</p>
         </div>
       </div>
       <div v-if="user">

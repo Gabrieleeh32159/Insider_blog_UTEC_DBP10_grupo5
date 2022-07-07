@@ -60,19 +60,21 @@ export default {
     ...mapGetters(["user"]),
     ...mapGetters(["posts"]),
   },
-  
+
   async created() {
     let post_response = await axios.get("/posts", {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("token"),
-      },});
+      },
+    });
     let posts = await post_response.data.posts;
     this.$store.dispatch("posts", posts);
 
     let groups_response = await axios.get("/groups?page=0", {
       headers: {
         Authorization: "Bearer " + localStorage.getItem("token"),
-      },});
+      },
+    });
     let groups = groups_response.data.grupos;
     this.$store.dispatch("groups", groups);
   },
@@ -80,5 +82,5 @@ export default {
 </script>
 
 <style scoped>
-  @import '../assets/styles.css'
+@import "../assets/styles.css";
 </style>

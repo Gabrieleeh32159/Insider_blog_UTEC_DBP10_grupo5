@@ -12,11 +12,15 @@
             class="form-control"
           />
         </div>
-      
 
         <div class="form-group">
           <label>Email</label>
-          <input type="email" name="email" v-model="email" class="form-control" />
+          <input
+            type="email"
+            name="email"
+            v-model="email"
+            class="form-control"
+          />
         </div>
 
         <div class="form-group">
@@ -42,7 +46,7 @@
       </form>
     </div>
     <div class="alert alert-danger" role="alert" v-if="error">
-      {{error_msg}}
+      {{ error_msg }}
     </div>
   </header>
 </template>
@@ -78,28 +82,27 @@ export default {
   },
   methods: {
     async handleSubmit() {
-      this.error = false
+      this.error = false;
       if (this.password == this.confirm_pass) {
-        await axios.patch("/users/" + this.slug, {
-          username: this.username,
-          email: this.email,
-          description: this.description,
-          password: this.password,
-        })
-        .catch(
-          err => {
-            console.log(err)
-            this.error = true
-            this.error_msg = "Invalid Form! Please try again."
-          }
-        );
+        await axios
+          .patch("/users/" + this.slug, {
+            username: this.username,
+            email: this.email,
+            description: this.description,
+            password: this.password,
+          })
+          .catch((err) => {
+            console.log(err);
+            this.error = true;
+            this.error_msg = "Invalid Form! Please try again.";
+          });
 
-        if(this.error == false){
+        if (this.error == false) {
           await router.push("/user/" + this.slug);
         }
       } else {
-        this.error = true
-        this.error_msg = "Passwords don't match!"
+        this.error = true;
+        this.error_msg = "Passwords don't match!";
       }
     },
   },
@@ -118,6 +121,6 @@ export default {
   border: 1px solid #dddddd;
   display: flex;
   flex-direction: column;
-  align-items:flex-startsssss;
+  align-items: flex-startsssss;
 }
 </style>

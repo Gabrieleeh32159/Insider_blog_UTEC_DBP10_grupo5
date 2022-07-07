@@ -3,7 +3,6 @@
     <form @submit.prevent="handleSubmit">
       <h3>Sign Up</h3>
       <div class="content-section">
-
         <div class="form-group">
           <label>Username</label>
           <input
@@ -16,7 +15,12 @@
 
         <div class="form-group">
           <label>Email</label>
-          <input type="email" name="email" v-model="email" class="form-control" />
+          <input
+            type="email"
+            name="email"
+            v-model="email"
+            class="form-control"
+          />
         </div>
 
         <div class="form-group">
@@ -47,7 +51,7 @@
       </div>
     </form>
     <div class="alert alert-danger" role="alert" v-if="error">
-      {{error_msg}}
+      {{ error_msg }}
     </div>
   </header>
 </template>
@@ -69,30 +73,26 @@ export default {
   },
   methods: {
     async handleSubmit() {
-      this.error = false
-      await axios.post(
-        "/users",
-        {
-            username: this.username,
-            email: this.email,
-            password: this.password,
-        }
-      ).catch(
-        err => {
-          console.log(err)
+      this.error = false;
+      await axios
+        .post("/users", {
+          username: this.username,
+          email: this.email,
+          password: this.password,
+        })
+        .catch((err) => {
+          console.log(err);
           this.error = true;
-          this.error_msg = "Invalid Form! Please try again."
-        }
-      );
-      if(error == false){
-        this.$router.push("/login")
+          this.error_msg = "Invalid Form! Please try again.";
+        });
+      if (this.error == false) {
+        this.$router.push("/login");
       }
     },
   },
-}
+};
 </script>
 
 <style>
-  @import '../assets/styles.css'
-
+@import "../assets/styles.css";
 </style>

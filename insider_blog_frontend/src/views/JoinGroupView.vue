@@ -18,7 +18,7 @@
       </div>
     </form>
     <div class="alert alert-danger" role="alert" v-if="error">
-      {{error_msg}}
+      {{ error_msg }}
     </div>
   </header>
 </template>
@@ -45,15 +45,14 @@ export default {
   methods: {
     async handleSubmit() {
       this.error = false;
-      await axios.post("/user/" + this.user.id + "/group/" + this.group)
-      .catch(
-        err => {
-          console.log(err)
-          this.error = true
-          this.error_msg = "Invalid group id! Please try again."
-        }
-      );
-      if(error == false){
+      await axios
+        .post("/user/" + this.user.id + "/group/" + this.group)
+        .catch((err) => {
+          console.log(err);
+          this.error = true;
+          this.error_msg = "Invalid group id! Please try again.";
+        });
+      if (this.error == false) {
         await router.push("/");
       }
     },
@@ -62,6 +61,5 @@ export default {
 </script>
 
 <style>
-  @import '../assets/styles.css'
-
+@import "../assets/styles.css";
 </style>
