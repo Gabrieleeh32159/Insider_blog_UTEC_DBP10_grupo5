@@ -126,6 +126,9 @@ def create_app(test_config=None):
     def create_user():
         body = request.get_json()
 
+        if body is None:
+            abort(422)
+
         username = body.get('username', None)
         description = body.get('description', '')
         email = body.get('email', None)
@@ -133,6 +136,9 @@ def create_app(test_config=None):
         image = body.get('image', default_image)
 
         if username is None or email is None or password is None:
+            abort(422)
+
+        if username is "" or email is "" or password is "":
             abort(422)
 
         hashed_password = generate_password_hash(
@@ -151,8 +157,8 @@ def create_app(test_config=None):
         return jsonify({
             'success': True,
             'created': new_user_id,
-            'users': current_users,
-            'total_users': len(selection)
+            'total_users': len(selection),
+            'user': user.format()
         })
 
     @app.route('/user', methods=['GET'])
@@ -272,6 +278,10 @@ def create_app(test_config=None):
                 error_422 = True
                 abort(422)
 
+            if groupname is "":
+                error_422 = True
+                abort(422)
+
             group = Group(group_name=groupname)
 
             group_id = group.insert()
@@ -297,8 +307,7 @@ def create_app(test_config=None):
     def get_groups():
         error_404 = False
         try:
-            selection = Group.query.order_by("id").all()
-            groups = pagination(request, selection)
+            groups = [group.format() for group in Group.query.order_by("id").all()]
 
             if len(groups) == 0:
                 error_404 = True
@@ -387,6 +396,12 @@ def create_app(test_config=None):
             abort(422)
 
         if user is None or group is None:
+            abort(404)
+
+        if title is "" or content is "":
+            abort(422)
+
+        if user is "" or group is "":
             abort(404)
 
         post = Post(title=title, content=content,

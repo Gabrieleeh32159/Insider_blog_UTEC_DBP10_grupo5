@@ -4,7 +4,7 @@
       <h3>Unirse a un grupo</h3>
       <div class="content-section">
         <div class="form-group">
-          <label>Grupo</label>
+          <label>Id del grupo</label>
           <input
             type="group"
             name="group"
@@ -17,6 +17,9 @@
         </div>
       </div>
     </form>
+    <div class="alert alert-danger" role="alert" v-if="error">
+      {{error_msg}}
+    </div>
   </header>
 </template>
 
@@ -31,6 +34,7 @@ export default {
       title: "",
       content: "",
       group: 0,
+      error: false,
     };
   },
   computed: {
@@ -40,24 +44,24 @@ export default {
   },
   methods: {
     async handleSubmit() {
-      console.log("user", this.user.id);
-      console.log("group!!!", this.group);
-      await axios.post("/user/" + this.user.id + "/group/" + this.group);
-      //this.$store.dispatch("posts", posts);
-      await router.push("/");
+      this.error = false;
+      await axios.post("/user/" + this.user.id + "/group/" + this.group)
+      .catch(
+        err => {
+          console.log(err)
+          this.error = true
+          this.error_msg = "Invalid group id! Please try again."
+        }
+      );
+      if(error == false){
+        await router.push("/");
+      }
     },
   },
 };
 </script>
 
 <style>
-.site-header {
-  margin-top: 15px;
-  padding-left: 5%;
-  width: 500px;
-}
+  @import '../assets/styles.css'
 
-.form-group {
-  margin-top: 20px;
-}
 </style>

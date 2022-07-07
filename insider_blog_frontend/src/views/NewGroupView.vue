@@ -13,6 +13,9 @@
         </div>
       </div>
     </form>
+    <div class="alert alert-danger" role="alert" v-if="error">
+      {{error_msg}}
+    </div>
   </header>
 </template>
 
@@ -26,6 +29,8 @@ export default {
   data() {
     return {
       groupname: "",
+      error: false,
+      error_msg: "",
     };
   },
   computed: {
@@ -35,30 +40,30 @@ export default {
   },
   methods: {
     async handleSubmit() {
-      let response = await axios.post("http://127.0.0.1:5000/groups?page=0", {
-        groupname: this.groupname,
-        user_id: this.user.id,
-
+      this.error = false
+      await axios.post("/groups", {
         headers: {
           Authorization: "Bearer " + localStorage.getItem("token"),
         },
-      });
-      this.$store.dispatch("groups", response.data.groups);
-      //TheGroups.groups = response.data.groups;
-      this.$router.push("/");
+        groupname: this.groupname,
+        user_id: this.user.id,
+      })
+      .catch(
+        err => {
+          console.log(err)
+          this.error = true
+          this.error_msg = "Please enter a valid name."
+        }
+      );
+      if(this.error == false){
+        this.$router.push("/");
+      }
     },
   },
 };
 </script>
 
 <style>
-.site-header {
-  margin-top: 15px;
-  padding-left: 5%;
-  width: 500px;
-}
+  @import '../assets/styles.css'
 
-.form-group {
-  margin-top: 20px;
-}
 </style>

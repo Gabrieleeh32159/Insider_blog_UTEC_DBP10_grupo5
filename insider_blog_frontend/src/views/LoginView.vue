@@ -26,6 +26,9 @@
         </div>
       </div>
     </form>
+    <div class="alert alert-danger" role="alert" v-if="error">
+      {{error_msg}}
+    </div>
   </header>
 </template>
 
@@ -38,6 +41,7 @@ export default {
     return {
       username: "",
       password: "",
+      error: false,
     };
   },
   methods: {
@@ -51,25 +55,22 @@ export default {
             password: this.password,
           },
         }
+      ).catch(
+        err => {
+          console.log(err)
+          this.error = true;
+          this.error_msg = "Invalid Login! Please try again."
+        }
       );
-
-      localStorage.setItem("token", login_response.data.token);
-      this.$store.dispatch("user", login_response.data.user);
-
-      this.$router.push("/");
+      localStorage.setItem("token", login_response.data.token)
+      this.$store.dispatch("user", login_response.data.user)
+      this.$router.push("/")
     },
   },
 };
 </script>
 
 <style>
-.site-header {
-  margin-top: 15px;
-  padding-left: 5%;
-  width: 500px;
-}
+  @import '../assets/styles.css'
 
-.form-group {
-  margin-top: 20px;
-}
 </style>

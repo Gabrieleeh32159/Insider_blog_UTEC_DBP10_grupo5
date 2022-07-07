@@ -34,8 +34,8 @@
     </div>
     <TheGroups />
   </div>
-  <div v-else>
-    <h1>Please login or register to continue!! :D</h1>
+  <div v-else class="alert alert-danger" role="alert">
+    You must first login to see this page.
   </div>
 </template>
 
@@ -82,56 +82,5 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-  margin-left: 190px;
-  margin-right: 150px;
-  margin-bottom: 30px;
-}
-
-.posts {
-  margin-right: 50px;
-}
-
-.post-info {
-  background: #ffffff;
-  padding: 10px 20px;
-  border: 1px solid #dddddd;
-  border-radius: 3px;
-  margin-bottom: 20px;
-  display: flex;
-}
-.article-metadata {
-  margin-left: 10px;
-  border-bottom: 1px solid #dddddd;
-  width: 25rem;
-}
-
-.article-title {
-  color: #262626;
-  text-decoration: none;
-  font-weight: 550;
-}
-
-.article-title:hover {
-  color: #4899e1;
-}
-
-.article-metadata a {
-  margin: 10px;
-  margin-right: 30px;
-  color: #4899e1;
-  text-decoration: none;
-}
-
-.article-metadata a:hover {
-  text-decoration: underline;
-}
-
-.media-body h2,
-p {
-  padding-left: 15px;
-}
+  @import '../assets/styles.css'
 </style>

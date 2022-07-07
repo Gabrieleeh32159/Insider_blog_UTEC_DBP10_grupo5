@@ -37,6 +37,9 @@
         </div>
       </div>
     </form>
+    <div class="alert alert-danger" role="alert" v-if="error">
+      {{error_msg}}
+    </div>
   </header>
 </template>
 
@@ -51,7 +54,9 @@ export default {
       title: "",
       content: "",
       group_id: 0,
-      selected_group: 0,
+      selected_group: "",
+      error: false,
+      error_msg: "",
     };
   },
   computed: {
@@ -64,28 +69,36 @@ export default {
   },
   methods: {
     async handleSubmit() {
-      await axios.post("/posts", {
-          title: this.title,
-          content: this.content,
-          user_id: store.state.user.id,
-          group_id: store.state.groups.find(
-            (g) => g.group_name == this.selected_group
-          ).id,
-        })
-        .then(await router.push("/"));
-    },
+      this.error = false;
+      if(this.selected_group != ""){
+        await axios.post("/posts", {
+            title: this.title,
+            content: this.content,
+            user_id: store.state.user.id,
+            group_id: store.state.groups.find(
+              (g) => g.group_name == this.selected_group
+            ).id,
+          }).catch(
+            err => {
+            console.log(err)
+            this.error = true;
+            this.error_msg = "Invalid Form! Please try again."
+          }
+        );
+        if(this.error == false){
+          await router.push("/")
+        }
+      } else {
+        console.log("Error")
+        this.error = true;
+        this.error_msg = "Please select a group."
+      }
+    }
   },
 };
 </script>
 
 <style>
-.site-header {
-  margin-top: 15px;
-  padding-left: 5%;
-  width: 500px;
-}
+  @import '../assets/styles.css'
 
-.form-group {
-  margin-top: 20px;
-}
 </style>
