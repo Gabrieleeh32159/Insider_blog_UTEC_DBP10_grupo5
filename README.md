@@ -13,11 +13,15 @@ El nombre del proyecto es "Insider Blog"
 # Descripcion del proyecto
 Foro web con la finalidad de conectar universitarios con fines de crear grupos de estudio, resolver problemas específicos y conectar juniors con oportunidades de prácticas laborales.
 
+# Licencia de uso
+Este proyecto cuenta con licencia conforme a los términos de la licencia MIT
+
 # Objetivos principales / Mision / Vision
 El objetivo principal del proyecto es conectar universitarios de varias casas de estudio en la región.
 Nuestra misión es que diversos grupos de universitarios de diferentes universidades puedan conectarse con motivos de estudio o prácticas pre-profesionales.
 Nuestra visión es ser el principal portal de conectividad entre universitarios del Perú, ofreciendo un servicio simple pero efectivo y funcional.
 
+<<<<<<< HEAD
 ## Informacion acerca de las librerias/frameworks/plugins utilizadas en Front-end, Back-end y Base de datos
 ### VUE.js : Framework en javascript en el que desarrollamos todo el frontend
 #### Axios : Nuestra libreria para la comunicacion http y requests ajax
@@ -27,12 +31,11 @@ Nuestra visión es ser el principal portal de conectividad entre universitarios 
 
 ## Frontend
 -flask : Framework principal con el que hacemos la aplicacion
+=======
+# Informacion acerca de las librerias/frameworks/plugins utilizadas en Front-end, Back-end y Base de datos
+-vue: framework utilizado para la creación del frontend
+>>>>>>> f40b0f9f948f1ea5a7780f47a48b2781dee9a60d
 -datetime : Para guardar los posts con la fecha de creacion.
--flask_sqlalchemy: ORM para vincular nuestro python con la db en Postgres
--flask_bcrypt : Encriptar contraseñas y desencriptarlas al trabajar con ellas en la db
--flask_wtf : Para usar FlaskForms y nos facilite la creacion de formularios
--flask_login : Para usar funciones como "@login_required" que nos van a facilitar el trabajo
--flask_migrate : Para gestionar las versiones de la base de datos
 -wtforms : Validadores de email, longitud, data requerida, etc para los formularios
 -PIL : Para la compresion de imagenes que se usan en los perfiles
 -secrets : Para generar una cadena de caracteres aleatorios para serializar
