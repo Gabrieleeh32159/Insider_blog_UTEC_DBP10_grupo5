@@ -210,15 +210,20 @@ def create_app(test_config=None):
 
             body = request.get_json()
             if 'username' in body:
-                user.username = body.get('username')
+                if body.get('username') != "":
+                    user.username = body.get('username')
             if 'email' in body:
-                user.email = body.get('email')
+                if body.get('email') != "":
+                    user.email = body.get('email')
             if 'password' in body:
-                user.password = body.get('password')
+                if body.get('password') != "":
+                    user.password = body.get('password')
             if 'description' in body:
-                user.description = body.get('description')
-            if 'image' in body:
-                user.image_file = body.get('image')
+                if body.get('description') != "":
+                    user.description = body.get('description')
+
+            if body.get('username') == "" and body.get('email') == "" and body.get('password') == "" and body.get('description') == "":
+                abort(422)
 
             user.update()
 

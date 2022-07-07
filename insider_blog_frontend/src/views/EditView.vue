@@ -39,20 +39,10 @@
             Submit
           </button>
         </div>
-
-        <div
-          id="diferent-passwords-alert"
-          style="
-            background-color: rgba(255, 20, 50, 0.8);
-            border-radius: 10px;
-            border: solid 3px red;
-            margin-top: 20px;
-            display: none;
-          "
-        >
-          <h2>Contraseñas distintas</h2>
-        </div>
       </form>
+    </div>
+    <div class="alert alert-danger" role="alert" v-if="error">
+      {{error_msg}}
     </div>
   </header>
 </template>
@@ -71,6 +61,8 @@ export default {
       description: "",
       password: "",
       confirm_pass: "",
+      error: false,
+      error_msg: "",
     };
   },
   props: {
@@ -86,14 +78,28 @@ export default {
   },
   methods: {
     async handleSubmit() {
+      this.error = false
       if (this.password == this.confirm_pass) {
         await axios.patch("/users/" + this.slug, {
           username: this.username,
-        });
+          email: this.email,
+          description: this.description,
+          password: this.password,
+        })
+        .catch(
+          err => {
+            console.log(err)
+            this.error = true
+            this.error_msg = "Invalid Form! Please try again."
+          }
+        );
 
-        await router.push("/" + this.slug);
+        if(this.error == false){
+          await router.push("/user/" + this.slug);
+        }
       } else {
-        console.log("gil");
+        this.error = true
+        this.error_msg = "Passwords don't match!"
       }
     },
   },
