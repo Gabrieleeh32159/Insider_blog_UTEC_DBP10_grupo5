@@ -27,14 +27,14 @@
   /* The alert message box */
   .alert {
     padding: 20px;
-    background-color: #f44336; /* Red */
+    background-color: #f5382a; /* Red */
     color: white;
     margin-bottom: 15px;
   }
   
   .success {
     padding: 20px;
-    background-color: #1ad37d; /* Red */
+    background-color: #2cc375; /* Red */
     color: white;
     margin-bottom: 15px;
   }
@@ -81,13 +81,13 @@
   }
   
   .article-title:hover {
-    color: #4899e1;
+    color: #4298e3;
   }
   
   .article-metadata a {
     margin: 10px;
     margin-right: 30px;
-    color: #4899e1;
+    color: #4298e3;
     text-decoration: none;
   }
   
