@@ -54,12 +54,12 @@ export default {
 }
 
 .group-title {
-  color: #262626;
+  color: #1c1c1c;
   text-decoration: none;
   font-size: 20px;
 }
 
 .group-title:hover {
-  color: #4899e1;
+  color: #3295ed;
 }
 </style>
