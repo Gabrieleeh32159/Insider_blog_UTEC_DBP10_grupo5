@@ -87,8 +87,7 @@ def create_app(test_config=None):
 
     @app.route('/users', methods=['GET'])
     def get_users():
-        selection = User.query.order_by('id').all()
-        users = pagination(request, selection)
+        users = [user.format() for user in User.query.order_by('id').all()]
 
         if len(users) == 0:
             abort(404)
@@ -96,7 +95,7 @@ def create_app(test_config=None):
         return jsonify({
             'success': True,
             'users': users,
-            'amount_users': len(selection)
+            'amount_users': len(users)
         })
 
     @app.route('/signup', methods=['GET', 'POST'])

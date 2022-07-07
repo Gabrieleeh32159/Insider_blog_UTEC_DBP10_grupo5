@@ -60,6 +60,7 @@ export default {
     ...mapGetters(["user"]),
     ...mapGetters(["posts"]),
   },
+  
   async created() {
     let post_response = await axios.get("/posts", {
       headers: {

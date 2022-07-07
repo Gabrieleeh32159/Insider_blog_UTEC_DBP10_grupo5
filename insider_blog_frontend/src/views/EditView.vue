@@ -1,56 +1,59 @@
 <template>
   <header class="site-header">
-    <form @submit.prevent="handleSubmit">
-      <h3>Edit {{ user.username }} Profile'</h3>
-      <div class="form-group">
-        <label>Username</label>
-        <input
-          type="text"
-          name="username"
-          v-model="username"
-          class="form-control"
-        />
-      </div>
+    <div class="container">
+      <form @submit.prevent="handleSubmit">
+        <h3>Edit {{ user.username }} Profile</h3>
+        <div class="form-group">
+          <label>Username</label>
+          <input
+            type="text"
+            name="username"
+            v-model="username"
+            class="form-control"
+          />
+        </div>
+      
 
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" name="email" v-model="email" class="form-control" />
-      </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" name="email" v-model="email" class="form-control" />
+        </div>
 
-      <div class="form-group">
-        <label>Description</label>
-        <textarea v-model="description" class="form-control"></textarea>
-      </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea v-model="description" class="form-control"></textarea>
+        </div>
 
-      <div class="form-group">
-        <label>Password</label>
-        <input v-model="password" class="form-control" />
-      </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input v-model="password" class="form-control" />
+        </div>
 
-      <div class="form-group">
-        <label>Confirm Password</label>
-        <input v-model="confirm_pass" class="form-control" />
-      </div>
+        <div class="form-group">
+          <label>Confirm Password</label>
+          <input v-model="confirm_pass" class="form-control" />
+        </div>
 
-      <div class="form-group">
-        <button class="btn btn-primary btn-block" v-on:click="handleSubmit()">
-          Submit
-        </button>
-      </div>
+        <div class="form-group">
+          <button class="btn btn-primary btn-block" v-on:click="handleSubmit()">
+            Submit
+          </button>
+        </div>
 
-      <div
-        id="diferent-passwords-alert"
-        style="
-          background-color: rgba(255, 20, 50, 0.8);
-          border-radius: 10px;
-          border: solid 3px red;
-          margin-top: 20px;
-          display: none;
-        "
-      >
-        <h2>Contraseñas distintas</h2>
-      </div>
-    </form>
+        <div
+          id="diferent-passwords-alert"
+          style="
+            background-color: rgba(255, 20, 50, 0.8);
+            border-radius: 10px;
+            border: solid 3px red;
+            margin-top: 20px;
+            display: none;
+          "
+        >
+          <h2>Contraseñas distintas</h2>
+        </div>
+      </form>
+    </div>
   </header>
 </template>
 
@@ -96,3 +99,19 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.form-group {
+  margin-top: 20px;
+}
+
+.container {
+  padding: 20px;
+  margin-block: 40px;
+  width: 100%;
+  border: 1px solid #dddddd;
+  display: flex;
+  flex-direction: column;
+  align-items:flex-startsssss;
+}
+</style>

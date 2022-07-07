@@ -22,12 +22,12 @@
 
         <div class="form-group">
           <label>Group</label>
-          <select
-            class="form-control form-control-lg"
-            v-model="selected_group_name"
-          >
-            <option v-for="group in current_groups" v-bind:key="group.id">
-              {{ group.group_name }}
+          <select class="form-control form-control-lg" v-model="selected_group">
+            <option
+              v-for="group_name in user.groups_ids"
+              v-bind:key="group_name"
+            >
+              {{ group_name }}
             </option>
           </select>
         </div>
@@ -50,9 +50,8 @@ export default {
     return {
       title: "",
       content: "",
-      selected_group: "General",
-      group_id: this.selected_group.id,
-      current_groups: store.getters.groups,
+      group_id: 0,
+      selected_group: 0,
     };
   },
   computed: {
@@ -65,12 +64,10 @@ export default {
   },
   methods: {
     async handleSubmit() {
-      await axios
-        .post("/posts", {
+      await axios.post("/posts", {
           title: this.title,
           content: this.content,
           user_id: store.state.user.id,
-          //group_id: this.selected_group,
           group_id: store.state.groups.find(
             (g) => g.group_name == this.selected_group
           ).id,
